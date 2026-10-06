@@ -1,6 +1,6 @@
 // Cloudflare: publicerar sidan som statiska filer. Byt "name" till kundens projektnamn.
 {
-  "name": "kundnamn-site",
+  "name": "arterauf",
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": ".",
