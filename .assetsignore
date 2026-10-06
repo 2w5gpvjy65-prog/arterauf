@@ -2,6 +2,7 @@
 .wrangler
 .gitignore
 .claude
+.playwright-mcp
 wrangler.jsonc
 README.md
 CLAUDE.md

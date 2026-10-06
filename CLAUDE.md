@@ -85,14 +85,32 @@ Det här repot är en webbsida som **Elevora UF** bygger åt en kund. Varje kund
 
 ## DEL 2: Den här kunden (fyll i vid projektstart)
 
-- **Företag:** _[namn]_ · Instagram: _[@konto]_
-- **Kontaktperson:** _[namn, mejl]_
-- **Säljer:** _[produkter]_
-- **Tjänst och pris:** _[t.ex. Webbshop, UF-pris 1 200 kr]_
-- **Domän:** _[domän.se]_ · registrar: _[Loopia/one.com]_
-- **Stil:** _[färger, typsnitt, känsla, referenser]_
+- **Företag:** Artera UF · Instagram: [@arterauf](https://www.instagram.com/arterauf/) (inga inlägg ännu, okt 2026)
+- **Kontaktperson:** _[namn, mejl saknas]_. Fyra tjejer från Mora: Meja, Nora, Embla och Lilly (förnamn från Instagram-bion, bekräfta att de vill stå med)
+- **Säljer:** handgjorda keramikfat (kavlade plattor, därav kaveln i loggan)
+- **Tjänst och pris:** Webbshop, UF-pris 1 200 kr. Sidan är också Elevoras visningsexempel.
+- **Domän:** _[domän.se saknas]_ · registrar: _[ ]_
+- **Stil:**
+  - Allt utgår från loggan: en utkavlad lerplatta med en kavel. Den oregelbundna "lerplattan" är sidans formspråk (bakgrunder bakom faten är ojämna plattor, aldrig rundade kort).
+  - Färger: kalk `#F0E8DD` (loggans bakgrund, sidans botten), lera `#CFC0B0` (plattan), bränd `#2E2520` (text, knappar), sten `#73665C` (dämpad text), kavel `#B48A63` (trä, små detaljer). Glasyrfärger per fat: Siljan `#3F5A68`, Hemus `#6F7B58`, Gesunda `#E7DFD2` med järnprickar, Vika `#D2A39C`. **Ingen terrakotta.**
+  - Typsnitt: Marcellus (romerska versaler som i loggans ordbild) för rubriker och produktnamn, Hanken Grotesk för brödtext, Reenie Beanie för några få handskrivna anteckningar (max 3–4 på sidan).
+  - Effekt: faten är riktiga 3D-modeller (Three.js, `js/fat3d.js` + `js/vendor/three.js`). De snurrar långsamt och vrids när man scrollar. Avsnittet "Så gör vi" visar hela processen på ett fat: kavla, forma och stämpla, skröjbränna, glasera, glasyrbränna. Statiska bilder i `img/fat-*.webp` visas om WebGL saknas.
+  - Ton: rak, varm och personlig, skriven som tjejerna själva ("vi"). Inga säljfloskler.
 - **Konton (kundens):** GitHub _[ ]_ · Cloudflare _[ ]_ · Stripe _[ ]_ · Web3Forms _[ ]_
-- **Betalsätt:** _[kort, Klarna, Swish – eller utan Swish om de säljer smycken/klockor]_ · **Frakt:** _[t.ex. 39 kr, PostNord]_
-- **Stripe-länkar:** _[produkt → testlänk → livelänk]_
-- **Status:** _[skiss / första förslag / publicerad / överlämnad]_
-- **Beslut och önskemål:** _[lägg till här under projektets gång]_
+- **Betalsätt:** kort, Klarna, Swish (keramikfat är tillåtet för Swish) · **Frakt:** 39 kr, PostNord, skickas inom 2 vardagar (standard, bekräfta med kunden. Keramik kan behöva dyrare paket)
+- **Produkter (förslag, byt mot riktiga):** Siljan, ovalt, blå 189 kr · Hemus, runt, grön 149 kr · Gesunda, avlångt, vit med prickar 229 kr · Vika, organisk form, rosa 169 kr
+- **Stripe-länkar** (Elevora sandbox, redirect till `https://arterauf.2w5gpvjy65.workers.dev/kop-klart.html`):
+  - Frakt 39 kr: `price_1UNgPlCygnkVBVd5XygxEKmY`
+  - Siljan 189 kr → https://buy.stripe.com/test_cNi6oG5d40JoaNJ7O1cbC04 → _livelänk_
+  - Hemus 149 kr → https://buy.stripe.com/test_7sY28qbBsgImg832tHcbC05 → _livelänk_
+  - Gesunda 229 kr → https://buy.stripe.com/test_aFa3cu0WObo27Bx6JXcbC06 → _livelänk_
+  - Vika 169 kr → https://buy.stripe.com/test_fZubJ0eNE9fU9JFd8lcbC07 → _livelänk_
+  - Produktbilder för Stripe finns i `img/stripe-*.jpg` (läggs på produkterna när sidan är publicerad, Stripe kräver publika adresser)
+- **Förhandsvisning:** https://arterauf.2w5gpvjy65.workers.dev (Cloudflare-konto 2w5gpvjy65, Elevoras under bygget). Vid lansering: byt `og:image`/`og:url` i index.html och redirect-adressen i Stripe-länkarna till kundens domän.
+- **Status:** första förslag
+- **Beslut och önskemål:** Inga produktbilder finns ännu, så faten visas som 3D-modeller. När tjejerna har riktiga foton: lägg dem i `img/` och visa dem i produktsektionen. 3D-faten kan finnas kvar i hero och "Så gör vi".
+  - Produktnamnen (platser runt Mora), priserna, måtten och texterna om processen är Elevoras förslag. Byt mot det tjejerna faktiskt säljer och gör.
+  - Statiska bilder (`img/fat-*.webp`, `img/stripe-*.jpg`, `img/og.jpg`) är renderade från 3D-modellerna med funktionen `snapshot()` i `js/fat3d.js` (dubbel upplösning, nedskalad). Ändras ett fat: rendera om bilderna.
+  - `js/vendor/three.js` är en avskalad Three.js (r186) byggd en gång med esbuild. Det finns inget byggsteg för sidan.
+  - Lokalt på Windows: kör `npx wrangler dev --port 8791 --persist-to <mapp utanför repot>`, annars laddar wrangler om i en loop (den bevakar sin egen `.wrangler`-mapp).
+  - Testköp gjort 2026-10-07 (Siljan + frakt, 228 kr, kort 4242) i Elevora sandbox: betalningen gick igenom och skickade vidare till `kop-klart.html`.
