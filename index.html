@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KUNDNAMN – kort beskrivning</title>
+  <meta name="description" content="En mening om vad företaget säljer.">
+  <meta property="og:title" content="KUNDNAMN">
+  <meta property="og:description" content="En mening om vad företaget säljer.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#f4f1ec">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+
+  <header class="header">
+    <div class="wrap header__inner">
+      <a href="./" class="logo">KUNDNAMN</a>
+      <nav class="nav" id="nav" aria-label="Huvudmeny">
+        <a href="#produkter">Produkter</a>
+        <a href="#om">Om oss</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav" aria-label="Öppna meny">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <h1>Rubrik som säger vad de säljer.</h1>
+        <p class="lead">En kort mening om varumärket.</p>
+        <a href="#produkter" class="btn">Se produkterna</a>
+      </div>
+    </section>
+
+    <!-- PRODUKTER: kopiera ett <article> per produkt.
+         "Köp nu" länkar till en Stripe Payment Link. Under bygget en testlänk (buy.stripe.com/test_…)
+         från Elevora sandbox, vid lansering kundens riktiga länk. Se "Betalning" i CLAUDE.md. -->
+    <section class="section" id="produkter">
+      <div class="wrap">
+        <h2>Produkter</h2>
+        <div class="grid">
+          <article class="product">
+            <img src="img/produkt-1.jpg" alt="Produktnamn" width="800" height="1000" loading="lazy">
+            <h3>Produktnamn</h3>
+            <p class="price">499 kr</p>
+            <a class="btn btn--block" href="https://buy.stripe.com/DIN-PAYMENT-LINK" rel="noopener">Köp nu</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="om">
+      <div class="wrap narrow">
+        <h2>Om oss</h2>
+        <p>Text om företaget.</p>
+      </div>
+    </section>
+
+    <section class="section section--dark" id="kontakt">
+      <div class="wrap narrow">
+        <h2>Kontakt</h2>
+        <!-- Web3Forms: byt DIN-WEB3FORMS-NYCKEL och mejl/domän nedan -->
+        <form class="form" method="POST" action="https://api.web3forms.com/submit">
+          <input type="hidden" name="access_key" value="DIN-WEB3FORMS-NYCKEL">
+          <input type="hidden" name="subject" value="Nytt meddelande från hemsidan">
+          <input type="hidden" name="redirect" value="https://DOMAN.SE/tack.html">
+          <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off">
+          <label>Namn<input type="text" name="namn" autocomplete="name" required></label>
+          <label>Mejl<input type="email" name="email" autocomplete="email" required></label>
+          <label>Meddelande<textarea name="meddelande" rows="4" required></textarea></label>
+          <button type="submit" class="btn btn--light btn--block">Skicka</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>© <span id="year">2026</span> KUNDNAMN · <a href="kopvillkor.html">Köpvillkor</a> · Sidan är byggd av <a href="https://elevorauf.se" rel="noopener">Elevora UF</a></p>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=1"></script>
+</body>
+</html>

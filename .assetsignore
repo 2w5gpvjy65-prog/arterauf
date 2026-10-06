@@ -1,0 +1,7 @@
+.git
+.wrangler
+.gitignore
+.claude
+wrangler.jsonc
+README.md
+CLAUDE.md

@@ -1,0 +1,65 @@
+/* NEUTRALT SKELETT, inte en färdig design. Byt färger, typsnitt och layout helt efter kundens varumärke (se CLAUDE.md). */
+:root {
+  --bg: #f4f1ec;
+  --surface: #faf8f5;
+  --ink: #1d1c1a;
+  --muted: #6d675f;
+  --line: #ddd6cb;
+  --accent: #1b2a40;
+  --font: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--bg); scroll-behavior: smooth; scroll-padding-top: 72px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+h1, h2, h3 { font-weight: 500; line-height: 1.1; letter-spacing: -0.03em; margin: 0 0 .5em; text-wrap: balance; }
+h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); }
+h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); }
+h3 { font-size: 1.1rem; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 700px) { .wrap { padding: 0 40px; } }
+.narrow { max-width: 680px; }
+.section { padding: 96px 0; }
+@media (max-width: 700px) { .section { padding: 64px 0; } }
+.hidden { display: none !important; }
+
+.btn { display: inline-flex; justify-content: center; align-items: center; padding: 14px 26px; background: var(--ink); color: var(--bg); border: 1px solid var(--ink); border-radius: 2px; font: inherit; font-weight: 500; text-decoration: none; cursor: pointer; }
+.btn:hover { background: var(--accent); border-color: var(--accent); }
+.btn--light { background: var(--bg); color: var(--ink); border-color: var(--bg); }
+.btn--block { width: 100%; }
+
+/* Meny: fast högst upp med helt täckande bakgrund (Safari på iPhone färgar då ytan ovanför) */
+.header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background-color: var(--bg); border-bottom: 1px solid var(--line); }
+.header + main { padding-top: 64px; }
+.header__inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.logo { font-weight: 600; font-size: 1.4rem; text-decoration: none; letter-spacing: -0.03em; }
+.nav { display: flex; gap: 28px; }
+.nav a { text-decoration: none; color: var(--muted); }
+.nav a:hover { color: var(--ink); }
+.nav-toggle { display: none; background: none; border: 0; padding: 12px 4px; cursor: pointer; }
+.nav-toggle span { display: block; width: 24px; height: 1.5px; background: var(--ink); margin: 6px 0; }
+@media (max-width: 760px) {
+  .nav-toggle { display: block; }
+  .nav { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0; background: var(--bg); border-bottom: 1px solid var(--line); padding: 0 16px 16px; display: none; }
+  .nav.is-open { display: flex; }
+  .nav a { padding: 14px 0; border-bottom: 1px solid var(--line); color: var(--ink); }
+}
+
+.hero { padding: 120px 0 80px; }
+.lead { font-size: 1.15rem; color: var(--muted); max-width: 32em; }
+
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 28px; }
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; } }
+.product img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; background: var(--surface); margin-bottom: 12px; }
+.price { color: var(--muted); margin: 0 0 12px; }
+
+.section--dark { background: var(--accent); color: var(--bg); }
+.form label { display: block; margin-bottom: 16px; font-size: .9rem; }
+.form input, .form textarea { display: block; width: 100%; margin-top: 6px; padding: 12px; font: inherit; border: 1px solid transparent; border-radius: 2px; background: #fff; color: var(--ink); }
+
+.footer { padding: 32px 0; font-size: .85rem; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
