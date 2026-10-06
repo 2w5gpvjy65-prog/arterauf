@@ -3,35 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Köpvillkor – KUNDNAMN</title>
-  <meta name="description" content="Köpvillkor, frakt och ångerrätt för KUNDNAMN.">
+  <title>Köpvillkor – Artera UF</title>
+  <meta name="description" content="Köpvillkor, frakt och ångerrätt för Artera UF.">
+  <meta name="theme-color" content="#F0E8DD">
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=1">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Marcellus&family=Reenie+Beanie&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=2">
 </head>
-<body>
-  <!-- Krävs för webbshoppar (konsumentlagar och Stripe). Byt KUNDNAMN, KUNDMEJL, FRAKT och LEVERANSTID. -->
-  <main class="section">
-    <div class="wrap narrow">
-      <a href="/" class="logo">KUNDNAMN</a>
+<body class="page">
+  <!-- Krävs för webbshoppar (konsumentlagar och Stripe). Lägg till kundens mejl när den finns (se CLAUDE.md). -->
+  <header class="page__top">
+    <div class="wrap">
+      <a href="/" class="logo" aria-label="Artera UF, till startsidan">
+        <svg class="logo__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M7 38c1-6 7-10 15-10s16 2 24 1 11 4 11 10-2 13-9 15-18 1-27 1S9 54 7 49s-1-6 0-11z" fill="#CFC0B0"/><g transform="rotate(-24 32 27)"><rect x="3" y="25" width="11" height="4.4" rx="2.2" fill="#C9A47F"/><rect x="50" y="25" width="11" height="4.4" rx="2.2" fill="#C9A47F"/><rect x="12" y="21.5" width="40" height="11.4" rx="5.7" fill="#D9BC9E" stroke="#A8825F" stroke-width="1.4"/></g></svg>
+        <span class="logo__word">Artera<span class="logo__uf">UF</span></span>
+      </a>
+    </div>
+  </header>
+  <main class="page__main">
+    <div class="wrap">
       <h1>Köpvillkor</h1>
 
       <h2>Vilka vi är</h2>
-      <p>KUNDNAMN är ett UF-företag inom Ung Företagsamhet. Kontakt: <a href="mailto:KUNDMEJL">KUNDMEJL</a>.</p>
+      <p>Artera UF är ett UF-företag inom Ung Företagsamhet, som drivs av elever i Mora. Du når oss via <a href="/#kontakt">kontaktformuläret</a> eller på Instagram, <a href="https://www.instagram.com/arterauf/" rel="noopener">@arterauf</a>.</p>
 
       <h2>Priser och betalning</h2>
-      <p>Alla priser är i svenska kronor. Som UF-företag är vi inte momsregistrerade. Du betalar via Stripe med kort, Klarna eller Swish. Vi ser aldrig dina kortuppgifter.</p>
+      <p>Alla priser är i svenska kronor. Som UF-företag är vi inte momsregistrerade, så priserna är utan moms. Du betalar via Stripe med kort, Klarna eller Swish. Vi ser aldrig dina kortuppgifter.</p>
+
+      <h2>Handgjorda fat</h2>
+      <p>Varje fat är gjort för hand. Därför kan form, storlek och glasyr skilja sig lite från bilderna och mellan fat av samma sort. Det räknas inte som ett fel på varan.</p>
 
       <h2>Frakt och leverans</h2>
-      <p>Frakten kostar FRAKT kr och vi skickar med PostNord inom LEVERANSTID. Vi levererar inom Sverige.</p>
+      <p>Frakten kostar 39 kr. Vi skickar med PostNord inom 2 vardagar efter att du har betalat och levererar bara inom Sverige.</p>
 
       <h2>Ångerrätt</h2>
-      <p>Du har 14 dagars ångerrätt från att du tagit emot varan. Mejla oss inom 14 dagar och skicka tillbaka varan oanvänd. Du betalar returfrakten. Vi betalar tillbaka köpesumman inom 14 dagar efter att vi fått varan.</p>
+      <p>Du har 14 dagars ångerrätt från att du tagit emot varan. Kontakta oss inom 14 dagar och skicka tillbaka fatet oanvänt och väl inpackat. Du betalar returfrakten. Vi betalar tillbaka köpesumman inom 14 dagar efter att vi fått tillbaka fatet.</p>
 
       <h2>Reklamation</h2>
-      <p>Är något fel på varan har du rätt att reklamera i tre år enligt konsumentköplagen. Mejla oss med en bild och beskrivning så löser vi det.</p>
+      <p>Har fatet gått sönder i frakten eller har det ett fel, har du rätt att reklamera i tre år enligt konsumentköplagen. Skicka en bild och en kort beskrivning så löser vi det.</p>
 
       <h2>Personuppgifter</h2>
       <p>Vi använder ditt namn, din adress, ditt telefonnummer och din mejl bara för att leverera din beställning. Betalningen hanteras av Stripe.</p>
@@ -39,8 +51,18 @@
       <h2>Tvister</h2>
       <p>Kontakta oss först. Löser vi det inte kan du vända dig till Allmänna reklamationsnämnden, <a href="https://www.arn.se" rel="noopener">arn.se</a>.</p>
 
-      <a href="/" class="btn">Tillbaka till butiken</a>
+      <div class="page__actions"><a href="/" class="btn">Tillbaka till butiken</a></div>
     </div>
   </main>
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <p class="footer__brand">Artera UF, Mora</p>
+      <ul class="footer__links">
+        <li><a href="/kopvillkor.html">Köpvillkor</a></li>
+        <li><a href="https://www.instagram.com/arterauf/" rel="noopener">Instagram</a></li>
+      </ul>
+      <p class="footer__credit">Sidan är byggd av <a href="https://elevorauf.se" rel="noopener">Elevora UF</a></p>
+    </div>
+  </footer>
 </body>
 </html>

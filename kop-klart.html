@@ -3,24 +3,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tack för ditt köp! – KUNDNAMN</title>
+  <title>Tack för ditt köp! – Artera UF</title>
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#F0E8DD">
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=1">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Marcellus&family=Reenie+Beanie&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=2">
 </head>
-<body>
+<body class="page page--centered">
   <!-- Stripe skickar köparen hit efter betalningen (after_completion i Payment Link). -->
-  <main class="section">
-    <div class="wrap narrow">
-      <a href="/" class="logo">KUNDNAMN</a>
+  <header class="page__top">
+    <div class="wrap">
+      <a href="/" class="logo" aria-label="Artera UF, till startsidan">
+        <svg class="logo__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M7 38c1-6 7-10 15-10s16 2 24 1 11 4 11 10-2 13-9 15-18 1-27 1S9 54 7 49s-1-6 0-11z" fill="#CFC0B0"/><g transform="rotate(-24 32 27)"><rect x="3" y="25" width="11" height="4.4" rx="2.2" fill="#C9A47F"/><rect x="50" y="25" width="11" height="4.4" rx="2.2" fill="#C9A47F"/><rect x="12" y="21.5" width="40" height="11.4" rx="5.7" fill="#D9BC9E" stroke="#A8825F" stroke-width="1.4"/></g></svg>
+        <span class="logo__word">Artera<span class="logo__uf">UF</span></span>
+      </a>
+    </div>
+  </header>
+  <main class="page__main">
+    <div class="wrap">
       <h1>Tack för ditt köp!</h1>
-      <p class="lead">Vi har fått din beställning och skickar den inom 2 vardagar. Kvittot kommer till din mejl.</p>
-      <p>Frågor om ordern? Mejla <a href="mailto:KUNDMEJL">KUNDMEJL</a>.</p>
-      <a href="/" class="btn">Tillbaka till butiken</a>
+      <p class="lead">Vi har fått din beställning. Vi packar fatet ordentligt och skickar det med PostNord inom 2 vardagar. Kvittot kommer till din mejl.</p>
+      <p>Undrar du något om ordern? Skriv till oss via <a href="/#kontakt">kontaktformuläret</a> eller på Instagram, <a href="https://www.instagram.com/arterauf/" rel="noopener">@arterauf</a>.</p>
+      <p class="note page__note" aria-hidden="true">tack! /Meja, Nora, Embla &amp; Lilly</p>
+      <div class="page__actions"><a href="/" class="btn">Tillbaka till startsidan</a></div>
     </div>
   </main>
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <p class="footer__brand">Artera UF, Mora</p>
+      <ul class="footer__links">
+        <li><a href="/kopvillkor.html">Köpvillkor</a></li>
+        <li><a href="https://www.instagram.com/arterauf/" rel="noopener">Instagram</a></li>
+      </ul>
+      <p class="footer__credit">Sidan är byggd av <a href="https://elevorauf.se" rel="noopener">Elevora UF</a></p>
+    </div>
+  </footer>
 </body>
 </html>
