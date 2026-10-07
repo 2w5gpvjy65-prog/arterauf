@@ -5,8 +5,8 @@
 // Saknas WebGL ligger bilderna i img/fat-*.webp kvar. Bilderna tas fram med samma kod (se snapshot längst ner).
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, BufferGeometry, BufferAttribute, PlaneGeometry, LatheGeometry,
-  MeshPhysicalMaterial, MeshStandardMaterial, MeshBasicMaterial, ShadowMaterial, DirectionalLight, PointLight, Color, Vector2,
-  CanvasTexture, PMREMGenerator, NeutralToneMapping, SRGBColorSpace, VSMShadowMap, RoomEnvironment
+  MeshPhysicalMaterial, MeshStandardMaterial, MeshBasicMaterial, ShadowMaterial, DirectionalLight, PointLight, Color, Vector2, Vector3,
+  CanvasTexture, PMREMGenerator, NeutralToneMapping, SRGBColorSpace, VSMShadowMap, PCFShadowMap, BoxGeometry, BackSide
 } from './vendor/three.js';
 
 const TAU = Math.PI * 2;
@@ -24,6 +24,7 @@ const smoothstep = (a, b, x) => ease(seg(x, a, b));
 // curl = en ände som viker sig upp. Glasyren beskrivs i glaze.
 export const FAT = {
   vika: {
+    detail: [0.78, 0.3],
     size: [1.8, 1.2], n: 2.3, seed: 5, T: 0.065,
     lobes: [[2, 0.05, 0.6], [3, 0.055, 2.2], [4, 0.03, 4.0], [6, 0.012, 1.0]],
     lift: 0.3, liftFrom: 0.28, liftWaves: [[3, 0.95, 0.4], [5, 0.45, 2.1], [2, 0.3, 1.0]],
@@ -31,6 +32,7 @@ export const FAT = {
     glaze: { base: '#f5f1ed', deep: '#eee7e2', marble: '#eab8c5', marbleDeep: '#d98ea4', marbleAmt: 1, speck: 0.7, speckScale: 34, grain: 0, speckCol: '#262120', lightSpeck: 0, rough: 0.1, clear: 1, edgeCol: '#ffffff', edgeAmt: 0, mottle: 0.02, clay: '#e4dbd0' },
   },
   gesunda: {
+    detail: [-0.62, 0.55],
     size: [2.0, 0.95], n: 2.8, seed: 17, T: 0.07,
     lobes: [[2, 0.03, 1.3], [3, 0.045, 0.2], [5, 0.02, 2.6]],
     lift: 0.12, liftFrom: 0.45, liftWaves: [[2, 0.6, 1.0], [4, 0.45, 0.3]],
@@ -39,6 +41,7 @@ export const FAT = {
     glaze: { base: '#cec3b5', deep: '#b6a896', marble: '#000000', marbleDeep: '#000000', marbleAmt: 0, speck: 1.0, speckScale: 42, grain: 1, speckCol: '#4c3d31', lightSpeck: 1.0, rough: 0.56, clear: 0.1, edgeCol: '#ddd4c8', edgeAmt: 0.35, mottle: 0.13, clay: '#cbbfae' },
   },
   siljan: {
+    detail: [0.72, 0.5],
     size: [1.2, 1.12], n: 2, seed: 29, T: 0.06,
     lobes: [[3, 0.03, 0.5], [5, 0.035, 1.4], [7, 0.015, 0.3]],
     lift: 0.2, liftFrom: 0.3, liftWaves: [[4, 0.7, 0.2], [3, 0.3, 1.1], [6, 0.15, 0.5]],
@@ -46,6 +49,7 @@ export const FAT = {
     glaze: { base: '#a5b2b9', deep: '#86959e', marble: '#000000', marbleDeep: '#000000', marbleAmt: 0, speck: 0.35, speckScale: 38, grain: 0.3, speckCol: '#3a3836', lightSpeck: 0, rough: 0.24, clear: 0.6, edgeCol: '#e6e9e6', edgeAmt: 0.35, mottle: 0.09, clay: '#e2d9cd' },
   },
   hemus: {
+    detail: [0.62, -0.45],
     size: [1.0, 0.7], n: 2.3, seed: 43, T: 0.06,
     lobes: [[2, 0.04, 0.9], [3, 0.05, 2.6], [4, 0.03, 1.2]],
     lift: 0.19, liftFrom: 0.35, liftWaves: [[2, 0.95, -0.6], [4, 0.4, 1.8]],
@@ -200,7 +204,11 @@ float vnoise(vec3 p) {
   return mix(mix(mix(aHash(i), aHash(i + vec3(1,0,0)), f.x), mix(aHash(i + vec3(0,1,0)), aHash(i + vec3(1,1,0)), f.x), f.y),
              mix(mix(aHash(i + vec3(0,0,1)), aHash(i + vec3(1,0,1)), f.x), mix(aHash(i + vec3(0,1,1)), aHash(i + vec3(1,1,1)), f.x), f.y), f.z);
 }
+#ifdef LOWQ
+float fbm(vec3 p) { float a = 0.5, s = 0.0; for (int i = 0; i < 3; i++) { s += a * vnoise(p); p = p * 2.03 + 17.1; a *= 0.5; } return s / 0.875; }
+#else
 float fbm(vec3 p) { float a = 0.5, s = 0.0; for (int i = 0; i < 4; i++) { s += a * vnoise(p); p = p * 2.03 + 17.1; a *= 0.5; } return s / 0.9375; }
+#endif
 `;
 
 let stampTex = null;
@@ -250,13 +258,16 @@ uniform sampler2D uStamp;
 varying vec3 vRest; varying vec4 vInfo;
 float gMask; float gRough; float gHeight;
 ${GLSL_NOISE}
+float gHalo;
 float speckles(vec3 p, float density) {
   vec3 i = floor(p), f = fract(p);
   float on = step(1.0 - density, aHash(i + 5.31)) * (1.0 - smoothstep(0.4, 0.9, length(fwidth(p))));
   vec3 c = 0.3 + 0.4 * vec3(aHash(i), aHash(i + 17.13), aHash(i + 31.71));
-  float rad = 0.12 + 0.2 * aHash(i + 11.7);
+  float big = step(0.93, aHash(i + 2.2));
+  float rad = 0.1 + 0.16 * aHash(i + 11.7) + big * 0.12;
   float d = length(f - c);
   float aa = fwidth(d) + 0.002;
+  gHalo = max(gHalo, on * (1.0 - smoothstep(rad, rad * 2.4, d)) * 0.5);
   return on * (1.0 - smoothstep(rad - aa, rad + aa, d));
 }
 float marble(vec3 q) {
@@ -290,7 +301,9 @@ vec3 arteraSurface() {
   vec3 body = mix(uWetCol, uDryCol, dryF);
   body = mix(body, mix(uBisqueCol, uClayCol, uFired), uBisque);
   body *= 0.95 + 0.1 * vnoise(P * 16.0);
+  gHalo = 0.0;
   float sp = clamp(speckles(P * uSpeckScale, 0.26 * uSpeck) + speckles(P * uSpeckScale * 0.45 + 3.1, 0.07 * uSpeck), 0.0, 1.0);
+  float halo = gHalo;
   float spAmt = sp * mix(0.12, 1.0, uFired * uBisque);
   vec3 bodyC = mix(body, uSpeckCol * 1.5, spAmt * 0.45);
   // glasyren
@@ -299,7 +312,11 @@ vec3 arteraSurface() {
   if (uMarbleAmt > 0.0) {
     vec3 q = P * 0.85 + vec3(uSeed * 1.7, 0.0, uSeed);
     float mm = marble(q);
+#ifdef LOWQ
+    float dp = 0.0;
+#else
     float dp = smoothstep(0.6, 0.8, fbm(q * 3.0 + 9.0)) * mm;
+#endif
     g = mix(g, uMarble, mm * uMarbleAmt);
     g = mix(g, uMarbleDeep, dp * uMarbleAmt * 0.7);
   }
@@ -307,6 +324,7 @@ vec3 arteraSurface() {
   g = mix(g, uEdgeCol, edge * uEdgeAmt);
   g = mix(g, vec3(0.97, 0.95, 0.91), speckles(P * 36.0 + 7.7, 0.22 * uLightSpeck) * 0.6);
   g *= 1.0 + (vnoise(P * 34.0) - 0.5) * 0.22 * uGrain * (1.0 - smoothstep(0.25, 0.6, fw * 34.0));
+  g = mix(g, mix(uSpeckCol, vec3(0.55, 0.4, 0.3), 0.6), halo * 0.22 * uFired * uBisque);
   g = mix(g, uSpeckCol, spAmt * 0.9);
   vec3 chalk = mix(g, vec3(0.92, 0.91, 0.89), 0.5) * (0.97 + 0.06 * vnoise(P * 9.0));
   vec3 col = mix(bodyC, mix(chalk, g, uFired), gMask);
@@ -333,7 +351,8 @@ vec3 arteraSurface() {
       .replace('#include <clearcoat_normal_fragment_begin>', '#include <clearcoat_normal_fragment_begin>\n#ifdef USE_CLEARCOAT\nclearcoatNormal = arteraBump(clearcoatNormal, gHeight * gMask);\n#endif')
       .replace('#include <lights_physical_fragment>', '#include <lights_physical_fragment>\n#ifdef USE_CLEARCOAT\nmaterial.clearcoat = gMask * uFired * uClear;\n#endif');
   };
-  m.customProgramCacheKey = () => 'artera-platta-1';
+  if (lowQuality) m.defines = { LOWQ: '' };
+  m.customProgramCacheKey = () => 'artera-platta-2';
   return { material: m, u };
 }
 
@@ -391,24 +410,56 @@ diffuseColor.rgb = mix(vec3(0.58, 0.37, 0.2), vec3(0.4, 0.23, 0.11), ring * 0.55
   return g;
 }
 
+function studio() {
+  const s = new Scene();
+  const panel = (w, h, c, pos, look) => { const m = new Mesh(new PlaneGeometry(w, h), new MeshBasicMaterial({ color: new Color(...c) })); m.position.set(...pos); m.lookAt(...look); s.add(m); };
+  const room = new Mesh(new BoxGeometry(24, 14, 24), new MeshBasicMaterial({ color: new Color(0.34, 0.31, 0.28), side: BackSide }));
+  room.position.y = 5; s.add(room);
+  panel(8, 6, [9, 8.7, 8.2], [-9, 6, 5], [0, 1, 0]);        // fönster
+  panel(3, 6, [5, 4.8, 4.6], [-6, 5, -7], [0, 1, 0]);       // smalt fönster bakom
+  panel(7, 7, [1.3, 1.25, 1.2], [9, 3, 3], [0, 1, 0]);      // reflexskärm
+  panel(10, 10, [1.8, 1.75, 1.7], [0, 11.5, 0], [0, 0, 0]); // tak
+  const floor = new Mesh(new PlaneGeometry(24, 24), new MeshBasicMaterial({ color: new Color(0.5, 0.43, 0.37) }));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -1.95; s.add(floor);
+  return s;
+}
 const envs = new WeakMap();
 function environment(renderer) {
-  if (!envs.has(renderer)) { const pm = new PMREMGenerator(renderer); envs.set(renderer, pm.fromScene(new RoomEnvironment(), 0.035).texture); pm.dispose(); }
+  if (!envs.has(renderer)) { const pm = new PMREMGenerator(renderer); envs.set(renderer, pm.fromScene(studio(), 0.03).texture); pm.dispose(); }
   return envs.get(renderer);
 }
+let lowQuality = false;
+// Kompositioner med flera fat (stillebenet överst på startsidan)
+const COMPS = {
+  'vika+hemus': [{ id: 'vika', x: -0.6, z: -0.45, yaw: 0.25 }, { id: 'hemus', x: 1.5, z: 0.95, yaw: -0.9 }],
+};
 
-function buildScene(renderer, spec, kind) {
+function buildScene(renderer, name, kind) {
   const scene = new Scene();
   scene.environment = environment(renderer);
-  scene.environmentIntensity = 0.6;
-  scene.environmentRotation.y = 0.6;
-  const platter = makePlatter(spec);
-  scene.add(platter.root);
+  scene.environmentIntensity = 0.55;
+  const list = COMPS[name] || [{ id: FAT[name] ? name : 'vika', x: 0, z: 0, yaw: 0 }];
+  const turn = new Group();
+  scene.add(turn);
+  // kompositionen centreras kring mitten så att den snurrar runt sig själv
+  let cw = 0, cx = 0, cz = 0;
+  list.forEach((c) => { const r = FAT[c.id].size[0]; cw += r; cx += c.x * r; cz += c.z * r; });
+  cx /= cw; cz /= cw;
+  const platters = list.map((c) => {
+    const p = makePlatter(FAT[c.id]);
+    p.root.position.set(c.x - cx, 0, c.z - cz);
+    p.root.rotation.y = c.yaw;
+    turn.add(p.root);
+    return p;
+  });
+  const platter = platters[0];
+  let fitR = 0, fitH = 0;
+  list.forEach((c, i) => { fitR = Math.max(fitR, Math.hypot(c.x - cx, c.z - cz) + platters[i].radius); fitH = Math.max(fitH, platters[i].height); });
   // nyckelljus snett uppifrån med mjuka skuggor, som från ett fönster
   const key = new DirectionalLight(0xfff5ec, 1.55);
   key.position.set(-2.6, 5.2, 2.4);
   key.castShadow = true;
-  const S = platter.radius * 2.4;
+  const S = fitR * 2.2;
   Object.assign(key.shadow.camera, { left: -S, right: S, top: S, bottom: -S, near: 0.5, far: 14 });
   key.shadow.camera.updateProjectionMatrix();
   // mindre skuggkarta på mobil sparar minne (skuggan är ändå mjuk)
@@ -426,14 +477,25 @@ function buildScene(renderer, spec, kind) {
   ground.receiveShadow = true;
   scene.add(ground);
   const camera = new PerspectiveCamera(24, 1, 0.05, 80);
-  return { scene, camera, platter, key, ground, under };
+  const pos = platter.mesh.geometry.getAttribute('position'), foot = [];
+  for (let i = 0; i < pos.count; i += 7) foot.push([pos.getX(i), pos.getZ(i)]);
+  const extent = (a0, a1) => {
+    let rx = 0, rz = 0;
+    for (let a = a0; a <= a1 + 1e-6; a += 0.05) {
+      const c = Math.cos(a), sn = Math.sin(a);
+      for (const [x, z] of foot) { rx = Math.max(rx, Math.abs(x * c + z * sn)); rz = Math.max(rz, Math.abs(-x * sn + z * c)); }
+    }
+    return [rx, rz];
+  };
+  return { scene, camera, platter, platters, turn, fitR, fitH, key, ground, under, extent };
 }
 
 // Kameran tittar på fatet från en höjdvinkel (el) och ett varv (az), och anpassar avståndet så att fatet fyller rutan.
-function frameCamera(cam, aspect, R, H, el, fill, yLook = 0, az = 0) {
+// R är fatets radie; Rz (valfri) är djupet om det skiljer sig från bredden.
+function frameCamera(cam, aspect, R, H, el, fill, yLook = 0, az = 0, Rz = R) {
   const vt = Math.tan(cam.fov * Math.PI / 360), ht = vt * aspect;
-  const halfH = R * Math.abs(Math.sin(el)) + H * Math.cos(el) * 0.5;
-  const dist = Math.max(R / ht, halfH / vt) / fill + R * Math.cos(el) * 0.3;
+  const halfH = Rz * Math.abs(Math.sin(el)) + H * Math.cos(el) * 0.5;
+  const dist = Math.max(R / ht, halfH / vt) / fill + Rz * Math.cos(el) * 0.3;
   cam.aspect = aspect;
   cam.position.set(Math.sin(az) * Math.cos(el) * dist, yLook + Math.sin(el) * dist, Math.cos(az) * Math.cos(el) * dist);
   cam.lookAt(0, yLook, 0);
@@ -449,9 +511,12 @@ function init() {
   layer.setAttribute('aria-hidden', 'true');
   const canvas = document.createElement('canvas');
   layer.appendChild(canvas);
+  // mobil: lägre upplösning och lättare glasyrberäkning, så att scrollen är mjuk
+  const mobile = matchMedia('(pointer: coarse)').matches || window.innerWidth < 700;
+  lowQuality = mobile;
   let renderer;
   try {
-    renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: mobile ? 'default' : 'high-performance' });
   } catch (e) { return; }
   document.body.appendChild(layer);
   document.documentElement.classList.add('has-3d');
@@ -460,7 +525,9 @@ function init() {
   renderer.toneMapping = NeutralToneMapping;
   renderer.autoClear = false;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = VSMShadowMap;
+  // mjuka skuggor kräver flyttalsbuffertar; saknas de (äldre telefoner) används vanliga skuggor
+  const ext = renderer.extensions;
+  renderer.shadowMap.type = ext.has('EXT_color_buffer_float') || ext.has('EXT_color_buffer_half_float') ? VSMShadowMap : PCFShadowMap;
 
   // "Reducera rörelse" (iPhone: Inställningar → Hjälpmedel → Rörelse): inget snurrar av sig självt,
   // faten vrids bara lugnt medan man scrollar och stannar direkt, ingen tröghet.
@@ -468,12 +535,16 @@ function init() {
   let still = motion.matches;
   motion.addEventListener?.('change', (e) => { still = e.matches; });
 
+  // Canvasen byggs bara om när bredden ändras. På iPhone ändras höjden hela tiden när adressfältet
+  // krymper och växer, så där görs den lika hög som skärmen från början och krymper aldrig.
   let W = 0, H = 0;
   const resize = () => {
-    const w = document.documentElement.clientWidth, h = window.innerHeight;
+    const w = document.documentElement.clientWidth;
+    let h = window.innerHeight;
+    if (mobile) h = Math.max(h, Math.round(window.screen.height || 0), w === W ? H : 0);
     if (w === W && Math.abs(h - H) < 2) return;
     W = w; H = h;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, w < 700 ? 2 : 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.6 : 1.75));
     renderer.setSize(W, H, false);
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
   };
@@ -482,14 +553,12 @@ function init() {
 
   const stages = els.map((el, i) => {
     const kind = el.dataset.kind || 'product';
-    const spec = FAT[el.dataset.fat] || FAT.vika;
-    const st = Object.assign(buildScene(renderer, spec, kind), {
+    const st = Object.assign(buildScene(renderer, el.dataset.fat, kind), {
       el, kind, base: 0.35 + i * 1.9, dir: i % 2 ? -1 : 1, drag: 0, vel: 0, live: false, p: 0,
       el0: kind === 'viewer' ? 0.62 : 0.66, camEl: 0.62, camAz: 0, viewEl: 0.62, lastTouch: -1e9, auto: 0,
     });
     if (kind === 'process') setupProcess(st);
     else setupDrag(st);
-    if (kind === 'viewer') setupViews(st);
     return st;
   });
 
@@ -507,17 +576,6 @@ function init() {
     window.addEventListener('pointercancel', up);
     st.el.addEventListener('click', (e) => { if (moved > 8) e.preventDefault(); });
     st.el.addEventListener('dragstart', (e) => e.preventDefault());
-  }
-
-  // Produktsidan: knappar för att se fatet ovanifrån, från sidan och underifrån
-  function setupViews(st) {
-    const views = { snett: 0.62, ovan: 1.42, sida: 0.1, under: -0.8 };
-    document.querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => {
-      st.viewEl = views[b.dataset.view] ?? 0.62;
-      st.lastTouch = performance.now();
-      document.querySelectorAll('[data-view]').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
-      if (still) st.camEl = st.viewEl;
-    }));
   }
 
   function setupProcess(st) {
@@ -584,13 +642,17 @@ function init() {
     return { R, el, az };
   }
 
-  let last = performance.now(), drewLast = false;
+  let last = performance.now(), drewLast = false, lastSY = -1, lastScroll = 0, tick = 0;
   function frame(now) {
     requestAnimationFrame(frame);
-    const dt = Math.min(0.05, (now - last) / 1000), t = now / 1000;
-    last = now;
     resize();
     const sy = window.scrollY;
+    if (sy !== lastSY) { lastSY = sy; lastScroll = now; }
+    // i mobilen räcker halva bildfrekvensen när ingen scrollar eller drar (svalare telefon, mjukare scroll)
+    const busy = now - lastScroll < 250 || stages.some(st => st.el.classList.contains('is-dragging') || Math.abs(st.vel) > 0.0005);
+    if (mobile && !busy && (tick++ % 2)) return;
+    const dt = Math.min(0.05, (now - last) / 1000), t = now / 1000;
+    last = now;
     canvas.style.transform = `translate3d(0,${sy}px,0)`;
     const vis = [];
     for (const st of stages) {
@@ -608,19 +670,29 @@ function init() {
         const { R, el, az } = updateProcess(st, dt);
         frameCamera(st.camera, aspect, R, T.height, el, W < 900 ? 0.9 : 0.78, 0.05, az);
       } else {
+        const turn = (a) => { st.turn.rotation.y = a; };
         if (Math.abs(st.vel) > 0.0001 && !st.el.classList.contains('is-dragging')) { st.drag += st.vel; st.vel *= Math.pow(0.04, dt); }
         const idle = now - st.lastTouch > 4000;
         if (st.kind === 'viewer') {
-          if (!still && idle) st.auto += dt * 0.12;
-          st.camEl += (st.viewEl - st.camEl) * (1 - Math.exp(-dt * 4));
-          st.under.intensity = clamp(-Math.sin(st.camEl) * 2.4, 0, 1.8);
-          T.setYaw(st.base + st.auto + st.drag + sy * (still ? 0.0008 : 0.0016));
-          frameCamera(st.camera, aspect, T.radius, T.height, st.camEl, 0.84, T.height * 0.3);
+          const tall = aspect < 0.8;
+          if (tall) {
+            // smal, hög ruta: fatets långsida går på höjden och fatet gungar lugnt fram och tillbaka
+            const SW = 0.55;
+            st.drag = clamp(st.drag, -SW, SW);
+            if (!st.tallFit) st.tallFit = st.extent(Math.PI / 2 - SW - 0.3, Math.PI / 2 + SW + 0.3);
+            const sway = still ? 0 : Math.sin(t * 0.35) * 0.3;
+            turn(Math.PI / 2 + sway + st.drag);
+            frameCamera(st.camera, aspect, st.tallFit[0], st.fitH, 1.05, 0.94, st.fitH * 0.3, 0, st.tallFit[1]);
+          } else {
+            if (!still && idle) st.auto += dt * 0.12;
+            turn(st.base + st.auto + st.drag + sy * (still ? 0.0008 : 0.0016));
+            frameCamera(st.camera, aspect, st.fitR, st.fitH, 0.62, 0.86, st.fitH * 0.3);
+          }
         } else {
           const spin = still ? sy * 0.0009 : t * 0.05 + sy * 0.0018;
-          T.setYaw(st.base + spin * st.dir + st.drag);
-          const el = st.kind === 'hero' ? lerp(0.6, 0.9, clamp(sy / Math.max(1, H))) : 0.64;
-          frameCamera(st.camera, aspect, T.radius, T.height, el, st.kind === 'hero' ? 0.88 : 0.86, T.height * 0.25);
+          turn(st.base + spin * st.dir + st.drag);
+          const el = st.kind === 'hero' ? lerp(0.62, 0.86, clamp(sy / Math.max(1, H))) : 0.66;
+          frameCamera(st.camera, aspect, st.fitR, st.fitH, el, st.kind === 'hero' ? 0.92 : 0.8, st.fitH * 0.25);
         }
       }
       const y = H - r.bottom;
@@ -641,7 +713,7 @@ function init() {
 }
 
 // Produktbild av ett fat (används för att ta fram img/fat-*.webp och Stripe-bilder). Inte en del av sidan.
-export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84, type = 'image/webp', quality = 0.9, background = null, aspect = 1 } = {}) {
+export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84, type = 'image/webp', quality = 0.9, background = null, aspect = 1, mode = 'hel', az = 0.4 } = {}) {
   const canvas = document.createElement('canvas');
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: !background, preserveDrawingBuffer: true });
   renderer.setPixelRatio(2);
@@ -651,9 +723,34 @@ export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84,
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = VSMShadowMap;
   if (background) renderer.setClearColor(new Color(background), 1); else renderer.setClearColor(0x000000, 0);
-  const st = buildScene(renderer, FAT[name], 'snapshot');
-  st.platter.setYaw(yaw);
-  frameCamera(st.camera, aspect, st.platter.radius, st.platter.height, el, fill, st.platter.height * 0.25);
+  const st = buildScene(renderer, name, 'snapshot');
+  st.turn.rotation.y = yaw;
+  st.scene.updateMatrixWorld(true);
+  if (mode === 'hel') {
+    frameCamera(st.camera, aspect, st.fitR, st.fitH, el, fill, st.fitH * 0.25);
+  } else if (mode === 'under') {
+    st.under.intensity = 2.4;
+    st.platter.contact.visible = false;
+    frameCamera(st.camera, aspect, st.fitR, st.fitH, -0.9, fill, st.fitH * 0.35, az);
+  } else {
+    // närbild: kameran nära en punkt på fatet (glasyren uppifrån, stämpeln underifrån)
+    const spec = FAT[name], g = st.platter.mesh.geometry, pos = g.getAttribute('position'), rest = g.getAttribute('aRest');
+    const stamp = mode === 'stampel', side = stamp ? -1 : 1;
+    const [fx, fz] = stamp ? [0, 0] : (spec.detail || [0.55, 0.35]);
+    let best = 0, bd = Infinity;
+    for (let i = 0; i < pos.count; i++) {
+      if (Math.abs(rest.getY(i) - side) > 0.01) continue;
+      const d = (rest.getX(i) - fx * spec.size[0]) ** 2 + (rest.getZ(i) - fz * spec.size[1]) ** 2;
+      if (d < bd) { bd = d; best = i; }
+    }
+    const p = st.platter.mesh.localToWorld(new Vector3(pos.getX(best), pos.getY(best), pos.getZ(best)));
+    const e = stamp ? -1.25 : 0.72, dist = stamp ? 1.5 : 2.6;
+    if (stamp) { st.under.intensity = 2.2; st.platter.contact.visible = false; }
+    st.camera.aspect = aspect;
+    st.camera.position.set(p.x + Math.sin(az) * Math.cos(e) * dist, p.y + Math.sin(e) * dist, p.z + Math.cos(az) * Math.cos(e) * dist);
+    st.camera.lookAt(p);
+    st.camera.updateProjectionMatrix();
+  }
   renderer.render(st.scene, st.camera);
   const out = document.createElement('canvas');
   out.width = Math.round(size * aspect); out.height = size;

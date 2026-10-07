@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Marcellus&family=Reenie+Beanie&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=3">
+  <link rel="stylesheet" href="/css/style.css?v=4">
   <link rel="modulepreload" href="/js/vendor/three.js">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Hemus – handgjort keramikfat","description":"Litet fat i salviagrön, halvmatt glasyr med en mjuk våg längs kanten.","image":"https://arterauf.2w5gpvjy65.workers.dev/img/stripe-hemus.jpg","brand":{"@type":"Brand","name":"Artera UF"},"offers":{"@type":"Offer","price":"179","priceCurrency":"SEK","availability":"https://schema.org/InStock","url":"https://arterauf.2w5gpvjy65.workers.dev/fat/hemus"}}</script>
 </head>
@@ -43,16 +43,20 @@
   <main class="produkt">
     <div class="wrap produkt__grid">
       <div class="produkt__media">
-        <!-- 3D-fat: js/fat3d.js ritar fatet här. Knapparna nedanför visar det från olika håll. -->
-        <div class="stage produkt__stage fat__stage--hemus" data-fat="hemus" data-kind="viewer">
-          <svg class="slab" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M96.8 51.5C96.9 61.5 89.1 70.8 84.3 78.1C79.6 85.4 76.6 92.4 68.5 95.1C60.5 97.9 46.3 97.6 36.1 94.7C26.0 91.8 13.0 84.3 7.5 77.6C1.9 70.9 2.7 63.4 2.8 54.3C3.0 45.1 2.6 31.0 8.4 22.7C14.3 14.5 28.2 7.0 37.9 4.8C47.7 2.5 59.4 7.1 66.9 9.3C74.5 11.5 78.4 10.9 83.4 18.0C88.4 25.0 96.6 41.5 96.8 51.5Z"/></svg>
-          <img class="stage__img" src="/img/fat-hemus.webp" alt="Hemus, litet vågigt keramikfat i salviagrön glasyr" width="1000" height="1000">
-        </div>
-        <div class="produkt__views" role="group" aria-label="Visa fatet">
-          <button type="button" data-view="snett" aria-pressed="true">Snett</button>
-          <button type="button" data-view="ovan" aria-pressed="false">Ovanifrån</button>
-          <button type="button" data-view="sida" aria-pressed="false">Från sidan</button>
-          <button type="button" data-view="under" aria-pressed="false">Undersidan</button>
+        <!-- Galleri: hela fatet i 3D (js/fat3d.js, går att snurra), undersidan och en närbild på glasyren -->
+        <div class="galleri">
+          <div class="stage galleri__main tile--hemus" data-fat="hemus" data-kind="viewer">
+            <img class="stage__img" src="/img/fat-hemus.webp" alt="Hemus, litet vågigt keramikfat i salviagrön glasyr" width="1000" height="1000">
+            <p class="tag galleri__hint" aria-hidden="true">Dra för att snurra</p>
+          </div>
+          <figure class="galleri__item tile--hemus">
+            <img src="/img/fat-hemus-under.webp" alt="Undersidan av Hemus med Arteras stämpel" width="900" height="900" loading="lazy">
+            <figcaption class="tag">Undersidan med vår stämpel</figcaption>
+          </figure>
+          <figure class="galleri__item">
+            <img src="/img/fat-hemus-detalj.webp" alt="Närbild på glasyren på Hemus" width="900" height="900" loading="lazy">
+            <figcaption class="tag">Glasyren på nära håll</figcaption>
+          </figure>
         </div>
       </div>
 
@@ -100,21 +104,21 @@
         <ul class="fler__list">
           <li>
             <a class="fler__item" href="/fat/vika">
-              <span class="fler__img fat__stage--vika"><svg class="slab" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M91.3 44.4C92.4 55.7 93.7 73.2 88.3 81.6C82.9 89.9 68.5 93.1 59.0 94.7C49.6 96.3 40.7 96.2 31.7 91.0C22.7 85.7 8.7 74.3 5.0 63.3C1.2 52.4 5.1 34.3 9.2 25.3C13.3 16.3 22.8 13.2 29.6 9.5C36.5 5.7 41.7 2.2 50.3 2.9C58.9 3.7 74.5 7.0 81.3 14.0C88.1 20.9 90.1 33.2 91.3 44.4Z"/></svg><img src="/img/fat-vika.webp" alt="" width="1000" height="1000" loading="lazy"></span>
+              <span class="fler__img tile--vika"><img src="/img/fat-vika.webp" alt="" width="1000" height="1000" loading="lazy"></span>
               <span class="fler__name">Vika</span>
               <span class="fler__price">349 kr</span>
             </a>
           </li>
           <li>
             <a class="fler__item" href="/fat/gesunda">
-              <span class="fler__img fat__stage--gesunda"><svg class="slab" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M95.5 62.0C95.4 72.4 93.2 72.5 91.0 77.7C88.8 82.9 86.9 90.2 82.1 93.1C77.3 96.0 73.1 95.2 62.1 95.0C51.1 94.9 24.7 94.2 16.2 91.9C7.6 89.6 12.6 89.1 10.6 81.3C8.6 73.4 4.5 54.9 4.3 44.8C4.1 34.8 6.7 27.5 9.4 20.9C12.2 14.4 15.8 8.1 20.9 5.6C25.9 3.1 29.7 5.3 39.6 5.9C49.6 6.5 72.0 7.9 80.6 9.4C89.3 10.9 88.9 6.3 91.4 15.1C93.9 23.8 95.6 51.6 95.5 62.0Z"/></svg><img src="/img/fat-gesunda.webp" alt="" width="1000" height="1000" loading="lazy"></span>
+              <span class="fler__img tile--gesunda"><img src="/img/fat-gesunda.webp" alt="" width="1000" height="1000" loading="lazy"></span>
               <span class="fler__name">Gesunda</span>
               <span class="fler__price">329 kr</span>
             </a>
           </li>
           <li>
             <a class="fler__item" href="/fat/siljan">
-              <span class="fler__img fat__stage--siljan"><svg class="slab" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M95.1 46.2C95.4 55.9 94.0 70.5 91.1 78.6C88.2 86.6 87.5 92.0 77.6 94.6C67.7 97.1 42.0 94.5 31.5 93.7C20.9 92.9 18.5 92.9 14.5 89.6C10.5 86.3 8.7 83.9 7.4 73.8C6.1 63.6 6.3 38.6 6.9 28.5C7.4 18.3 6.5 16.7 10.7 12.8C14.9 8.9 20.9 5.5 32.0 5.1C43.2 4.7 68.3 8.1 77.8 10.6C87.4 13.1 86.5 14.0 89.4 20.0C92.3 25.9 94.8 36.4 95.1 46.2Z"/></svg><img src="/img/fat-siljan.webp" alt="" width="1000" height="1000" loading="lazy"></span>
+              <span class="fler__img tile--siljan"><img src="/img/fat-siljan.webp" alt="" width="1000" height="1000" loading="lazy"></span>
               <span class="fler__name">Siljan</span>
               <span class="fler__price">249 kr</span>
             </a>
@@ -136,7 +140,7 @@
     </div>
   </footer>
 
-  <script src="/js/main.js?v=3"></script>
-  <script type="module" src="/js/fat3d.js?v=3"></script>
+  <script src="/js/main.js?v=4"></script>
+  <script type="module" src="/js/fat3d.js?v=4"></script>
 </body>
 </html>

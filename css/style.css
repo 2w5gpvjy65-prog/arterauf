@@ -1,14 +1,19 @@
-/* Artera UF. Formspråket kommer från loggan: en utkavlad lerplatta och en kavel. Se "Stil" i CLAUDE.md. */
+/* Artera UF. Stora färgade ytor som i en riktig butik, faten i dova pastelltoner. Se "Stil" i CLAUDE.md. */
 :root {
   --kalk: #F0E8DD;
   --kalk-ljus: #F7F2EB;
   --lera: #CFC0B0;
-  --lera-ljus: #DDD2C5;
   --brand: #2E2520;
   --brand-2: #3A302A;
   --sten: #6E6158;
   --sten-ljus: #B9AC9D;
   --kavel: #B48A63;
+  /* bakgrunder bakom faten, som papper i en fotostudio */
+  --hero: #CBB4A8;
+  --rosa: #DCC8BF;
+  --sand: #D5C7B5;
+  --dim: #C5CED2;
+  --salvia: #C9CEBD;
 
   --serif: "Marcellus", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -20,7 +25,7 @@
 @media (min-width: 700px) { :root { --gutter: 40px; } }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { background: var(--kalk); scroll-behavior: smooth; scroll-padding-top: var(--header); scroll-snap-type: y proximity; -webkit-text-size-adjust: 100%; overflow-x: clip; }
+html { background: var(--kalk); scroll-behavior: smooth; scroll-padding-top: var(--header); -webkit-text-size-adjust: 100%; overflow-x: hidden; overflow-x: clip; }
 body { position: relative; margin: 0; background: var(--kalk); color: var(--brand); font-family: var(--sans); font-size: 1.0625rem; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-underline-offset: .2em; text-decoration-thickness: 1px; }
@@ -29,7 +34,7 @@ a:hover { text-decoration-thickness: 2px; }
 h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.08; letter-spacing: -0.01em; margin: 0 0 .5em; text-wrap: balance; }
 h1 { font-size: clamp(2.75rem, 7.2vw, 5.4rem); line-height: 1.02; }
 h2 { font-size: clamp(2.25rem, 4.6vw, 3.6rem); }
-h3 { font-size: clamp(1.75rem, 2.6vw, 2.25rem); }
+h3 { font-size: clamp(1.6rem, 2.4vw, 2.1rem); }
 p { margin: 0 0 1em; }
 
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
@@ -70,73 +75,82 @@ p { margin: 0 0 1em; }
 .fat-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 5; }
 .fat-layer canvas { position: absolute; top: 0; left: 0; display: block; will-change: transform; }
 
-/* En "scen" är rutan där ett fat ritas. Plattan bakom är en ojämn lerplatta, som i loggan. */
+/* En "scen" är rutan där ett fat ritas */
 .stage { position: relative; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 a.stage { display: block; color: inherit; }
 .stage[data-kind="hero"], .stage[data-kind="product"], .stage[data-kind="viewer"] { cursor: grab; }
 a.stage:focus-visible { outline-offset: -6px; }
 .stage.is-dragging { cursor: grabbing; }
-.slab { position: absolute; left: 3%; right: 3%; top: 16%; bottom: 6%; width: 94%; height: 78%; fill: var(--slab, var(--lera)); }
 .stage__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity .5s; }
 .stage.is-live .stage__img { opacity: 0; }
+.tile--vika { background: var(--rosa); }
+.tile--gesunda { background: var(--sand); }
+.tile--siljan { background: var(--dim); }
+.tile--hemus { background: var(--salvia); }
 
-/* Hero */
-.hero { padding: 28px 0 40px; }
+/* Liten etikett i hörnet av en bild */
+.tag { position: absolute; left: 14px; bottom: 12px; z-index: 6; margin: 0; font-size: .8125rem; font-weight: 500; letter-spacing: .01em; color: var(--brand); pointer-events: none; }
+
+/* Hero: text till vänster, stor färgad panel med två fat till höger */
 .hero__grid { display: grid; grid-template-columns: minmax(0, 1fr); }
-.hero__text { position: relative; z-index: 6; }
+.hero__text { padding: 28px var(--gutter) 0; }
 .hero h1 { max-width: 9.5em; }
 .lead { font-size: 1.15rem; line-height: 1.55; max-width: 27em; }
 .hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: 28px; }
-.hero__stage { aspect-ratio: 1 / .92; margin: 4px calc(var(--gutter) * -1) 0; order: 0; }
-.hero__note { position: absolute; right: 7%; top: 4%; display: flex; align-items: flex-start; gap: 2px; transform: rotate(-4deg); opacity: 0; transition: opacity .6s .4s; }
-.hero__note svg { width: 44px; height: 30px; margin-top: 12px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transform: scaleX(-1) rotate(-10deg); }
-.stage.is-live .hero__note { opacity: .85; }
+.hero__panel { position: relative; background: var(--hero); }
+.hero__stage { aspect-ratio: 1 / 1; }
+.hero__note { position: absolute; right: 18px; top: 16px; z-index: 6; transform: rotate(-3deg); opacity: 0; transition: opacity .6s .4s; pointer-events: none; }
+.has-3d .hero__note { opacity: .8; }
 @media (max-width: 899px) {
   .hero__text { display: contents; }
-  .hero h1 { order: -2; }
-  .hero__stage { order: -1; }
-  .hero .lead, .hero__actions { order: 1; }
-  .hero__actions { margin-top: 4px; }
+  .hero h1 { order: -2; padding: 24px var(--gutter) 4px; }
+  .hero__panel { order: -1; }
+  .hero .lead, .hero__actions { order: 1; padding: 0 var(--gutter); }
+  .hero .lead { margin-top: 22px; }
+  .hero__actions { margin: 0 0 8px; }
 }
 @media (min-width: 900px) {
-  .hero { padding: 0; }
-  .hero__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; min-height: calc(100svh - var(--header)); padding-block: 40px 56px; }
-  .hero__stage { margin: 0 calc(var(--gutter) * -1) 0 -12%; aspect-ratio: 1 / .9; }
-  .hero__note { top: 7%; right: 10%; }
+  .hero__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); min-height: calc(100vh - var(--header)); min-height: calc(100svh - var(--header)); }
+  .hero__text { align-self: center; padding: 48px 48px 64px max(var(--gutter), calc((100vw - 1240px) / 2 + var(--gutter))); }
+  .hero__stage { position: absolute; inset: 0; aspect-ratio: auto; }
+  .hero__note { right: 32px; top: 28px; }
 }
 
-/* Faten */
-.faten { padding: 72px 0 96px; }
-.faten__head { display: grid; gap: 4px 48px; margin-bottom: 48px; }
+/* Faten: butiksrutor i dova färger */
+.faten { padding: 72px 0 88px; }
+.faten__head { display: grid; gap: 4px 48px; margin-bottom: 32px; }
 .faten__head p { max-width: 30em; margin: 0; }
 @media (min-width: 900px) {
-  .faten { padding: 120px 0 140px; }
-  .faten__head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: end; margin-bottom: 72px; }
+  .faten { padding: 120px 0 120px; }
+  .faten__head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: end; margin-bottom: 48px; }
   .faten__head h2 { margin: 0; }
 }
-.faten__list { display: grid; gap: 72px; }
+.butik { list-style: none; margin: 0; padding: 0; display: grid; gap: 40px 20px; }
+@media (min-width: 700px) { .butik { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.vara__bild { aspect-ratio: 1; margin: 0 calc(var(--gutter) * -1); }
+@media (min-width: 700px) { .vara__bild { margin: 0; } }
+.vara__info { display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; align-items: baseline; padding-top: 14px; }
+.vara__info h3 { margin: 0; }
+.vara__info h3 a { text-decoration: none; }
+.vara__info h3 a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
+.vara__pris { font-family: var(--serif); font-size: 1.4rem; margin: 0; }
+.vara__text { grid-column: 1 / -1; margin: 2px 0 0; color: var(--sten); font-size: .9375rem; }
+.faten__ship { margin: 48px 0 0; color: var(--sten); max-width: 36em; }
+
+/* På nära håll: närbilder på glasyrerna, kant i kant */
+.glasyr { padding: 0 0 88px; }
+.glasyr__head { display: grid; gap: 4px 48px; margin-bottom: 28px; }
+.glasyr__head p { max-width: 32em; margin: 0; }
+.glasyr__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.glasyr__list li { position: relative; aspect-ratio: 1; overflow: hidden; }
+.glasyr__list img { width: 100%; height: 100%; object-fit: cover; }
+.glasyr__list .tag { color: #fff; text-shadow: 0 1px 8px rgba(0, 0, 0, .35); }
 @media (min-width: 900px) {
-  .faten__list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(40px, 7vw, 120px); row-gap: 120px; }
-  .fat:nth-child(even) { margin-top: 180px; }
+  .glasyr { padding-bottom: 140px; }
+  .glasyr__head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: end; margin-bottom: 40px; }
+  .glasyr__head h2 { margin: 0; }
+  .glasyr__list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
-.fat__stage { aspect-ratio: 1 / .86; margin: 0 calc(var(--gutter) * -1) 8px; }
-@media (min-width: 700px) { .fat__stage { margin-inline: 0; } }
-.fat__stage--siljan { --slab: #D3DADB; }
-.fat__stage--hemus { --slab: #D7DACD; }
-.fat__stage--gesunda { --slab: #E1D8CC; }
-.fat__stage--vika { --slab: #E9DCD7; }
-.fat__info h3 a { text-decoration: none; }
-.fat__info h3 a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
-.fat__info { max-width: 32em; }
-.fat__info h3 { margin-bottom: .3em; }
-.fat__facts { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: 0 0 22px; font-size: .9375rem; }
-.fat__facts div { display: flex; gap: 8px; }
-.fat__facts dt { color: var(--sten); }
-.fat__facts dd { margin: 0; }
-.fat__buy { display: flex; align-items: center; gap: 20px; padding-top: 18px; border-top: 1px solid rgba(46, 37, 32, .14); }
-.price { font-family: var(--serif); font-size: 1.6rem; margin: 0 auto 0 0; }
-.faten__ship { margin: 72px 0 0; color: var(--sten); max-width: 36em; }
-@media (min-width: 900px) { .faten__ship { margin-top: 96px; } }
 
 /* Så gör vi: mörkt som en ugn. Fatet ligger fast medan stegen scrollar förbi. */
 .process { background: var(--brand); color: var(--kalk); padding: 80px 0 0; overflow: clip; }
@@ -144,40 +158,42 @@ a.stage:focus-visible { outline-offset: -6px; }
 .process__intro { max-width: 34em; margin-bottom: 8px; }
 .process__intro p { color: var(--sten-ljus); }
 .process__grid { display: grid; grid-template-columns: minmax(0, 1fr); }
-.process__stage { position: sticky; top: var(--header); z-index: 2; height: 50svh; margin: 0 calc(var(--gutter) * -1); background: var(--brand); --heat: 0; }
+/* i mobilen tar fatet bara en dryg tredjedel av skärmen */
+.process__stage { position: sticky; top: var(--header); z-index: 2; height: 36vh; height: 36svh; margin: 0 calc(var(--gutter) * -1); background: var(--brand); --heat: 0; }
 .process__stage::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 70% at 20% 100%, rgba(214, 118, 52, .32), rgba(214, 118, 52, 0) 70%); opacity: var(--heat); }
-.process__stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: -40px; height: 40px; background: linear-gradient(var(--brand), rgba(46, 37, 32, 0)); }
-.process__stage .stage__img { padding: 8%; }
-.process__steps { list-style: none; margin: 0; padding: 0 0 16svh; position: relative; z-index: 1; }
-.step { position: relative; min-height: 120svh; max-width: 30em; transition: opacity .5s; }
-.step__snap { position: absolute; left: 0; top: 80%; width: 1px; height: 1px; scroll-snap-align: start; scroll-margin-top: calc(50svh + 40px); }
-.step__body { position: sticky; top: calc(var(--header) + 50svh + 24px); padding-bottom: 24px; }
+.process__stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: -32px; height: 32px; background: linear-gradient(var(--brand), rgba(46, 37, 32, 0)); }
+.process__stage .stage__img { padding: 6%; }
+.process__steps { list-style: none; margin: 0; padding: 0 0 12vh; position: relative; z-index: 1; }
+.step { position: relative; min-height: 92vh; min-height: 92svh; max-width: 30em; transition: opacity .5s; }
+.step__body { position: sticky; top: calc(var(--header) + 36vh + 20px); top: calc(var(--header) + 36svh + 20px); padding-bottom: 24px; }
 .has-3d .step { opacity: .38; }
 .has-3d .step.is-active { opacity: 1; }
-.step__no { display: block; font-family: var(--serif); font-size: 1.15rem; color: var(--kavel); margin-bottom: 10px; }
+.step__no { display: block; font-family: var(--serif); font-size: 1.15rem; color: var(--kavel); margin-bottom: 8px; }
 .step__no::after { content: " av 5"; color: var(--sten-ljus); }
-.step h3 { margin-bottom: .35em; }
+.step h3 { margin-bottom: .3em; }
 .step p { color: var(--sten-ljus); }
 @media (min-width: 900px) {
   .process { padding-top: 140px; }
   .process__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 48px; }
-  .process__stage { order: 2; align-self: start; height: calc(100svh - var(--header)); margin: 0 calc(var(--gutter) * -1) 0 0; }
+  .process__stage { order: 2; align-self: start; height: calc(100vh - var(--header)); height: calc(100svh - var(--header)); margin: 0 calc(var(--gutter) * -1) 0 0; }
   .process__stage::after { display: none; }
   .process__steps { order: 1; padding: 30vh 0 20vh; }
-  .step { min-height: 115vh; }
+  .step { min-height: 110vh; }
   .step__body { top: calc(50vh - 80px); padding: 0; }
-  .step__snap { scroll-margin-top: calc(55vh - var(--header)); }
 }
 
-/* Om oss */
-.om { background: var(--lera); padding: 88px 0; }
-.om__grid { display: grid; gap: 8px 48px; }
+/* Om oss: stämpeln till vänster, texten till höger */
+.om { background: var(--lera); padding: 72px 0; }
+.om__grid { display: grid; gap: 32px 64px; align-items: center; }
+.om__bild { position: relative; margin: 0; }
+.om__bild img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.om__bild figcaption { margin-top: 10px; font-size: .9375rem; color: var(--brand); }
 .om__text { max-width: 33em; font-size: 1.125rem; }
 .om__text a { font-weight: 500; }
 .om__sign { font-size: 2.3rem; margin-top: 24px; transform: rotate(-2deg); transform-origin: left; }
 @media (min-width: 900px) {
-  .om { padding: 140px 0; }
-  .om__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .om { padding: 120px 0; }
+  .om__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
 }
 
 /* Frågor */
@@ -196,7 +212,7 @@ a.stage:focus-visible { outline-offset: -6px; }
 }
 
 /* Kontakt */
-.kontakt { background: var(--kalk-ljus); padding: 88px 0; border-top: 1px solid rgba(46, 37, 32, .08); }
+.kontakt { background: var(--salvia); padding: 88px 0; }
 .kontakt__grid { display: grid; gap: 16px 48px; }
 .kontakt__text p { max-width: 26em; }
 .form { max-width: 34em; }
@@ -217,29 +233,34 @@ a.stage:focus-visible { outline-offset: -6px; }
 .footer__credit { margin-left: auto !important; }
 @media (max-width: 700px) { .footer__credit { margin-left: 0 !important; width: 100%; } }
 
-/* Produktsida: stor 3D-vy till vänster, allt om fatet till höger */
-.produkt { padding: 16px 0 0; }
-.produkt__grid { display: grid; gap: 8px 64px; }
-.produkt__stage { aspect-ratio: 1 / .92; margin: 0 calc(var(--gutter) * -1); }
-.produkt__views { display: flex; flex-wrap: wrap; gap: 2px 16px; justify-content: center; margin: 4px 0 8px; }
-.produkt__views button { display: none; background: none; border: 0; padding: 10px 2px; font: inherit; font-size: .9375rem; color: var(--sten); cursor: pointer; border-bottom: 1px solid transparent; }
-.has-3d .produkt__views button { display: block; }
-.produkt__views button[aria-pressed="true"] { color: var(--brand); border-bottom-color: var(--brand); }
-.produkt__views button:hover { color: var(--brand); }
-.crumbs { margin: 8px 0 18px; font-size: .9375rem; }
+/* Produktsida: galleri till vänster (hela fatet i 3D, undersidan och en närbild), allt om fatet till höger */
+.produkt { padding: 0; }
+.produkt__grid { display: grid; gap: 24px 56px; }
+.galleri { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 0 calc(var(--gutter) * -1); }
+.galleri__main { grid-column: 1 / -1; aspect-ratio: 1; }
+.galleri__item { position: relative; margin: 0; aspect-ratio: 1; overflow: hidden; }
+.galleri__item img { width: 100%; height: 100%; object-fit: cover; }
+.galleri__hint { opacity: 0; transition: opacity .4s; }
+.has-3d .galleri__hint { opacity: 1; }
+@media (min-width: 700px) {
+  .produkt { padding-top: 24px; }
+  .galleri { margin: 0; aspect-ratio: 1; grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .galleri__main { grid-column: 1; grid-row: 1 / 3; aspect-ratio: auto; }
+  .galleri__item { aspect-ratio: auto; }
+}
+.crumbs { margin: 4px 0 14px; font-size: .9375rem; }
 .crumbs a { color: var(--sten); }
 .produkt__info h1 { font-size: clamp(2.75rem, 6vw, 4.6rem); margin-bottom: .1em; }
 .produkt__price { font-family: var(--serif); font-size: 1.75rem; margin: 0 0 18px; }
 .produkt__info .lead { margin-bottom: 26px; }
 .produkt__buy { width: 100%; min-height: 56px; font-size: 1.0625rem; }
-.produkt__ship { margin: 14px 0 36px; font-size: .9375rem; color: var(--sten); }
+.produkt__ship { margin: 14px 0 32px; font-size: .9375rem; color: var(--sten); }
 .produkt__text { max-width: 34em; }
 .produkt__facts { display: grid; gap: 0; margin: 28px 0 36px; border-top: 1px solid rgba(46, 37, 32, .16); }
 .produkt__facts div { display: grid; grid-template-columns: 8.5em 1fr; gap: 12px; padding: 13px 0; border-bottom: 1px solid rgba(46, 37, 32, .16); font-size: .9375rem; }
 .produkt__facts dt { color: var(--sten); }
 .produkt__facts dd { margin: 0; }
 .produkt__more { margin-bottom: 16px; }
-@media (min-width: 700px) { .produkt__stage { margin-inline: 0; } }
 @media (min-width: 900px) {
   .produkt { padding-top: 40px; }
   .produkt__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; }
@@ -248,17 +269,17 @@ a.stage:focus-visible { outline-offset: -6px; }
 }
 .fler { padding: 72px 0 96px; }
 .fler h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); }
-.fler__list { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.fler__list { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .fler__item { display: block; text-decoration: none; }
-.fler__img { position: relative; display: block; aspect-ratio: 1; margin-bottom: 10px; }
-.fler__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: transform .4s; }
-.fler__item:hover .fler__img img { transform: rotate(-4deg); }
+.fler__img { position: relative; display: block; aspect-ratio: 1; margin-bottom: 10px; overflow: hidden; }
+.fler__img img { position: absolute; inset: 6%; width: 88%; height: 88%; object-fit: contain; transition: transform .4s; }
+.fler__item:hover .fler__img img { transform: rotate(-4deg) scale(1.03); }
 .fler__name { display: block; font-family: var(--serif); font-size: 1.35rem; }
 .fler__price { color: var(--sten); font-size: .9375rem; }
-@media (max-width: 600px) { .fler__list { gap: 10px; } .fler__name { font-size: 1.1rem; } }
+@media (max-width: 600px) { .fler__list { gap: 8px; } .fler__name { font-size: 1.1rem; } }
 
 /* Enkla undersidor: tack, köp klart, köpvillkor, 404 */
-.page { min-height: 100svh; display: flex; flex-direction: column; }
+.page { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
 .page__top { padding: 20px 0; }
 .page__main { flex: 1; padding: 48px 0 96px; }
 .page__main .wrap { max-width: 760px; }
