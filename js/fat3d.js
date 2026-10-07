@@ -25,36 +25,36 @@ const smoothstep = (a, b, x) => ease(seg(x, a, b));
 export const FAT = {
   vika: {
     detail: [0.78, 0.3],
-    size: [1.8, 1.2], n: 2.3, seed: 5, T: 0.065,
+    size: [1.8, 1.2], n: 2.3, seed: 5, T: 0.085,
     lobes: [[2, 0.05, 0.6], [3, 0.055, 2.2], [4, 0.03, 4.0], [6, 0.012, 1.0]],
     lift: 0.3, liftFrom: 0.28, liftWaves: [[3, 0.95, 0.4], [5, 0.45, 2.1], [2, 0.3, 1.0]],
     folds: [{ p0: [-1.75, 0.85], p1: [0.55, -0.4], w: 0.27, h: 0.17 }, { p0: [1.7, -0.5], p1: [0.5, 0.2], w: 0.22, h: -0.05 }],
-    glaze: { base: '#f5f1ed', deep: '#eee7e2', marble: '#eab8c5', marbleDeep: '#d98ea4', marbleAmt: 1, speck: 0.7, speckScale: 34, grain: 0, speckCol: '#262120', lightSpeck: 0, rough: 0.1, clear: 1, edgeCol: '#ffffff', edgeAmt: 0, mottle: 0.02, clay: '#e4dbd0' },
+    glaze: { base: '#efe8e1', deep: '#e6ddd5', marble: '#dea6ba', marbleDeep: '#c47f9e', marbleAmt: 1, speck: 0.7, speckScale: 34, grain: 0, speckCol: '#262120', lightSpeck: 0, rough: 0.1, clear: 1, edgeCol: '#ffffff', edgeAmt: 0, mottle: 0.02, clay: '#e4dbd0' },
   },
   gesunda: {
     detail: [-0.62, 0.55],
-    size: [2.0, 0.95], n: 2.8, seed: 17, T: 0.07,
+    size: [2.0, 0.95], n: 2.8, seed: 17, T: 0.09,
     lobes: [[2, 0.03, 1.3], [3, 0.045, 0.2], [5, 0.02, 2.6]],
     lift: 0.12, liftFrom: 0.45, liftWaves: [[2, 0.6, 1.0], [4, 0.45, 0.3]],
     folds: [{ p0: [-0.55, -1.2], p1: [0.1, 1.1], w: 0.32, h: 0.28 }],
     curl: { ang: 0, s0: 1.25, R: 0.45, max: 0.85 },
-    glaze: { base: '#cec3b5', deep: '#b6a896', marble: '#000000', marbleDeep: '#000000', marbleAmt: 0, speck: 1.0, speckScale: 42, grain: 1, speckCol: '#4c3d31', lightSpeck: 1.0, rough: 0.56, clear: 0.1, edgeCol: '#ddd4c8', edgeAmt: 0.35, mottle: 0.13, clay: '#cbbfae' },
+    glaze: { base: '#d3c8b9', deep: '#bdb09e', marble: '#000000', marbleDeep: '#000000', marbleAmt: 0, speck: 1.0, speckScale: 38, grain: 0.5, speckCol: '#3e3129', lightSpeck: 0.2, rough: 0.2, clear: 0.85, edgeCol: '#ddd4c8', edgeAmt: 0.35, mottle: 0.13, clay: '#cbbfae' },
   },
   siljan: {
     detail: [0.72, 0.5],
-    size: [1.2, 1.12], n: 2, seed: 29, T: 0.06,
+    size: [1.2, 1.12], n: 2, seed: 29, T: 0.085,
     lobes: [[3, 0.03, 0.5], [5, 0.035, 1.4], [7, 0.015, 0.3]],
     lift: 0.2, liftFrom: 0.3, liftWaves: [[4, 0.7, 0.2], [3, 0.3, 1.1], [6, 0.15, 0.5]],
     folds: [],
-    glaze: { base: '#a5b2b9', deep: '#86959e', marble: '#000000', marbleDeep: '#000000', marbleAmt: 0, speck: 0.35, speckScale: 38, grain: 0.3, speckCol: '#3a3836', lightSpeck: 0, rough: 0.24, clear: 0.6, edgeCol: '#e6e9e6', edgeAmt: 0.35, mottle: 0.09, clay: '#e2d9cd' },
+    glaze: { base: '#aab3b1', deep: '#8d9895', marble: '#000000', marbleDeep: '#000000', marbleAmt: 0, speck: 0.6, speckScale: 36, grain: 0.3, speckCol: '#33302d', lightSpeck: 0, rough: 0.16, clear: 0.9, edgeCol: '#e6e9e6', edgeAmt: 0.35, mottle: 0.09, clay: '#e2d9cd' },
   },
   hemus: {
     detail: [0.62, -0.45],
-    size: [1.0, 0.7], n: 2.3, seed: 43, T: 0.06,
+    size: [1.0, 0.7], n: 2.3, seed: 43, T: 0.08,
     lobes: [[2, 0.04, 0.9], [3, 0.05, 2.6], [4, 0.03, 1.2]],
     lift: 0.19, liftFrom: 0.35, liftWaves: [[2, 0.95, -0.6], [4, 0.4, 1.8]],
     folds: [{ p0: [0.95, 0.6], p1: [0.15, -0.15], w: 0.2, h: 0.07 }],
-    glaze: { base: '#a9b09d', deep: '#8c9583', marble: '#000000', marbleDeep: '#000000', marbleAmt: 0, speck: 0.45, speckScale: 38, grain: 0.4, speckCol: '#3d3a32', lightSpeck: 0, rough: 0.42, clear: 0.22, edgeCol: '#e2e4d8', edgeAmt: 0.55, mottle: 0.08, clay: '#ddd3c6' },
+    glaze: { base: '#a3a682', deep: '#80855f', marble: '#000000', marbleDeep: '#000000', marbleAmt: 0, speck: 0.7, speckScale: 36, grain: 0.3, speckCol: '#2f2c25', lightSpeck: 0, rough: 0.17, clear: 0.9, edgeCol: '#e2e4d8', edgeAmt: 0.55, mottle: 0.08, clay: '#ddd3c6' },
   },
 };
 
@@ -424,71 +424,6 @@ diffuseColor.rgb = mix(vec3(0.58, 0.37, 0.2), vec3(0.4, 0.23, 0.11), ring * 0.55
   return g;
 }
 
-// Ett ekbord av plankor, som på ett riktigt produktfoto. Långt bort blir bordet mjukt oskarpt (som med en kamera).
-function woodTable() {
-  const u = { uFocus: { value: 10 } };
-  const m = new MeshStandardMaterial({ color: 0xffffff, roughness: 0.6, metalness: 0 });
-  m.onBeforeCompile = (sh) => {
-    sh.uniforms.uFocus = u.uFocus;
-    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vW;')
-      .replace('#include <project_vertex>', 'vW = (modelMatrix * vec4(transformed, 1.0)).xyz;\n#include <project_vertex>');
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
-uniform float uFocus;
-varying vec3 vW;
-float tRough;
-${GLSL_NOISE}
-vec3 woodColor(out float bump) {
-  float pw = 1.75;
-  vec2 wp = vec2(vW.x * 0.906 - vW.z * 0.423, vW.x * 0.423 + vW.z * 0.906);
-  float pz = wp.y / pw + 0.37, plank = floor(pz), fz = fract(pz);
-  float rnd = aHash(vec3(plank, 3.1, 7.7));
-  float x = wp.x * 0.55 + rnd * 37.0, y = (fz - 0.5) * pw;
-  float n = fbm(vec3(x * 0.35, y * 3.2, rnd * 9.0));
-  float rings = fract(y * 2.6 + n * 2.4 + sin(x * 0.45 + rnd * 6.0) * 0.35);
-  float ring = smoothstep(0.0, 0.22, rings) * (1.0 - smoothstep(0.4, 0.98, rings));
-  float streak = vnoise(vec3(x * 0.6, y * 30.0, rnd * 3.0)) * 0.6 + vnoise(vec3(x * 1.7, y * 75.0, rnd * 5.0)) * 0.4;
-  float pores = vnoise(vec3(x * 6.0, y * 120.0, rnd));
-  float tone = fbm(vec3(x * 0.12, y * 0.9, rnd * 4.0));
-  vec3 light = vec3(0.30, 0.185, 0.095), dark = vec3(0.13, 0.072, 0.035);
-  vec3 col = mix(light, dark, clamp(ring * 0.28 + streak * 0.34 + pores * 0.14 + (tone - 0.5) * 0.5, 0.0, 1.0));
-  col *= 0.86 + 0.28 * rnd;
-  // kvistar här och där
-  vec2 kc = vec2(floor(wp.x / 4.0) * 4.0 + 2.0 + (aHash(vec3(plank, 9.0, 1.0)) - 0.5) * 2.5, (plank + 0.5 - 0.37) * pw);
-  float kd = length((wp - kc) * vec2(1.0, 2.2));
-  float knot = step(0.6, aHash(vec3(plank, floor(wp.x / 4.0), 4.0))) * (1.0 - smoothstep(0.04, 0.12, kd));
-  col = mix(col, dark * 0.7, knot);
-  float seam = smoothstep(0.0, 0.01, fz) * (1.0 - smoothstep(0.99, 1.0, fz));
-  col *= mix(0.32, 1.0, seam);
-  bump = (ring * 0.6 + streak * 0.3 + pores * 0.25) * 0.0016 - (1.0 - seam) * 0.004;
-  tRough = 0.5 + 0.2 * streak;
-  // långt bort: mindre detaljer, som när kameran fokuserar på fatet
-  float far = smoothstep(uFocus * 0.95, uFocus * 1.8, length(vViewPosition));
-  col = mix(col, mix(light, dark, 0.32) * (0.86 + 0.28 * rnd), far * 0.8);
-  bump *= 1.0 - far;
-  return col;
-}
-vec3 woodBump(vec3 nrm, float h) {
-  vec3 dpdx = dFdx(-vViewPosition), dpdy = dFdy(-vViewPosition);
-  float dhdx = dFdx(h), dhdy = dFdy(h);
-  vec3 r1 = cross(dpdy, nrm), r2 = cross(nrm, dpdx);
-  float det = dot(dpdx, r1);
-  return normalize(abs(det) * nrm - sign(det) * (dhdx * r1 + dhdy * r2));
-}
-float gWoodH;`)
-      .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb = woodColor(gWoodH);')
-      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = tRough;')
-      .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\nnormal = woodBump(normal, gWoodH);');
-  };
-  if (lowQuality) m.defines = { LOWQ: '' };
-  m.customProgramCacheKey = () => 'artera-bord-1';
-  const mesh = new Mesh(new PlaneGeometry(70, 70), m);
-  mesh.rotation.x = -Math.PI / 2;
-  mesh.position.y = -0.001;
-  mesh.receiveShadow = true;
-  mesh.userData.u = u;
-  return mesh;
-}
-
 // Ljusmönster för solen: fönsterkarm och en kvist med smala blad (som på ett sommarbord)
 let goboTex = null;
 function goboTexture() {
@@ -552,7 +487,8 @@ const COMPS = {
   'vika+hemus': [{ id: 'vika', x: -0.6, z: -0.45, yaw: 0.25 }, { id: 'hemus', x: 1.5, z: 0.95, yaw: -0.9 }],
 };
 
-function buildScene(renderer, name, kind, table = kind !== 'process') {
+// sun = faten står på ett av bordsfotona: varm sol med lövmönster, genomskinlig bakgrund och skugga ner på fotot
+function buildScene(renderer, name, kind, sun = kind !== 'process') {
   const scene = new Scene();
   scene.environment = environment(renderer);
   scene.environmentIntensity = 0.55;
@@ -590,27 +526,30 @@ function buildScene(renderer, name, kind, table = kind !== 'process') {
   const under = new DirectionalLight(0xfff3e8, 0);
   under.position.set(0.6, -4, 2.5);
   scene.add(under);
-  let ground, wood = null;
-  if (table) {
-    // bordet i varmt, lågt solljus genom ett fönster (som på kundens referensfoto)
-    wood = woodTable();
-    scene.add(wood);
-    ground = wood;
+  let ground;
+  if (sun) {
+    // varmt, lågt solljus genom ett fönster uppe till vänster, som på bordsfotona
+    ground = new Mesh(new PlaneGeometry(S * 1.8, S * 1.8), new ShadowMaterial({ color: 0x1e130b, opacity: 0.58 }));
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
     key.castShadow = false;
-    key.intensity = 0.5;
+    key.intensity = 0.42;
+    key.color.set(0xffe6cc);
     key.position.set(3, 4, 4);
-    scene.environmentIntensity = 0.42;
-    const sun = new SpotLight(0xffe4c4, 2.7, 0, 0.7, 0.45, 0);
-    sun.position.set(-6.5, 8.5, -5);
-    sun.target.position.set(0.4, 0, 0.6);
-    sun.map = goboTexture();
-    sun.castShadow = true;
-    sun.shadow.mapSize.set(sm, sm);
-    sun.shadow.radius = 5;
-    sun.shadow.blurSamples = 16;
-    sun.shadow.bias = -0.0003;
-    sun.shadow.camera.near = 4; sun.shadow.camera.far = 30;
-    scene.add(sun, sun.target);
+    scene.environmentIntensity = 0.36;
+    const sol = new SpotLight(0xffd7a8, 3.1, 0, 0.7, 0.45, 0);
+    sol.position.set(-6.5, 8.5, -5);
+    sol.target.position.set(0.4, 0, 0.6);
+    sol.map = goboTexture();
+    sol.castShadow = true;
+    sol.shadow.mapSize.set(sm, sm);
+    sol.shadow.radius = 4;
+    sol.shadow.blurSamples = 16;
+    sol.shadow.bias = -0.0006;
+    sol.shadow.normalBias = 0.025;
+    sol.shadow.camera.near = 4; sol.shadow.camera.far = 30;
+    scene.add(sol, sol.target);
   } else {
     ground = new Mesh(new PlaneGeometry(S * 1.8, S * 1.8), new ShadowMaterial({ color: 0x2a1d15, opacity: kind === 'process' ? 0.42 : 0.24 }));
     ground.rotation.x = -Math.PI / 2;
@@ -628,7 +567,7 @@ function buildScene(renderer, name, kind, table = kind !== 'process') {
     }
     return [rx, rz];
   };
-  return { scene, camera, platter, platters, turn, fitR, fitH, key, ground, under, extent, wood };
+  return { scene, camera, platter, platters, turn, fitR, fitH, key, ground, under, extent };
 }
 
 // Kameran tittar på fatet från en höjdvinkel (el) och ett varv (az), och anpassar avståndet så att fatet fyller rutan.
@@ -823,20 +762,19 @@ function init() {
             if (!st.tallFit) st.tallFit = st.extent(Math.PI / 2 - SW - 0.3, Math.PI / 2 + SW + 0.3);
             const sway = still ? 0 : Math.sin(t * 0.35) * 0.3;
             turn(Math.PI / 2 + sway + st.drag);
-            frameCamera(st.camera, aspect, st.tallFit[0], st.fitH, 1.05, 0.94, st.fitH * 0.3, 0, st.tallFit[1]);
+            frameCamera(st.camera, aspect, st.tallFit[0], st.fitH, 1.08, 0.74, st.fitH * 0.3, 0, st.tallFit[1]);
           } else {
             if (!still && idle) st.auto += dt * 0.12;
             turn(st.base + st.auto + st.drag + sy * (still ? 0.0008 : 0.0016));
-            frameCamera(st.camera, aspect, st.fitR, st.fitH, 0.62, 0.86, st.fitH * 0.3);
+            frameCamera(st.camera, aspect, st.fitR, st.fitH, 0.95, 0.64, st.fitH * 0.3);
           }
         } else {
           const spin = still ? sy * 0.0009 : t * 0.05 + sy * 0.0018;
           turn(st.base + spin * st.dir + st.drag);
-          const el = st.kind === 'hero' ? lerp(0.62, 0.86, clamp(sy / Math.max(1, H))) : 0.66;
-          frameCamera(st.camera, aspect, st.fitR, st.fitH, el, st.kind === 'hero' ? 0.92 : 0.8, st.fitH * 0.25);
+          const el = st.kind === 'hero' ? lerp(0.92, 1.05, clamp(sy / Math.max(1, H))) : 0.98;
+          frameCamera(st.camera, aspect, st.fitR, st.fitH, el, st.kind === 'hero' ? 0.74 : 0.62, st.fitH * 0.25);
         }
       }
-      if (st.wood) st.wood.userData.u.uFocus.value = st.camera.position.length();
       const y = H - r.bottom;
       renderer.setViewport(r.left, y, r.width, r.height);
       renderer.setScissor(r.left, y, r.width, r.height);
@@ -855,7 +793,7 @@ function init() {
 }
 
 // Produktbild av ett fat (används för att ta fram img/fat-*.webp och Stripe-bilder). Inte en del av sidan.
-export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84, type = 'image/webp', quality = 0.9, background = null, aspect = 1, mode = 'hel', az = 0.4, table = null } = {}) {
+export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84, type = 'image/webp', quality = 0.9, background = null, aspect = 1, mode = 'hel', az = 0.4, sun = null } = {}) {
   const canvas = document.createElement('canvas');
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: !background, preserveDrawingBuffer: true });
   renderer.setPixelRatio(2);
@@ -865,8 +803,7 @@ export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84,
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = VSMShadowMap;
   if (background) renderer.setClearColor(new Color(background), 1); else renderer.setClearColor(0x000000, 0);
-  const st = buildScene(renderer, name, 'snapshot', table ?? (mode === 'hel' || mode === 'detalj'));
-  let focus = new Vector3(0, st.fitH * 0.25, 0);
+  const st = buildScene(renderer, name, 'snapshot', sun ?? (mode === 'hel' || mode === 'detalj'));
   st.turn.rotation.y = yaw;
   st.scene.updateMatrixWorld(true);
   if (mode === 'hel') {
@@ -892,10 +829,8 @@ export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84,
     st.camera.aspect = aspect;
     st.camera.position.set(p.x + Math.sin(az) * Math.cos(e) * dist, p.y + Math.sin(e) * dist, p.z + Math.cos(az) * Math.cos(e) * dist);
     st.camera.lookAt(p);
-    focus = p;
     st.camera.updateProjectionMatrix();
   }
-  if (st.wood) st.wood.userData.u.uFocus.value = st.camera.position.distanceTo(focus);
   renderer.render(st.scene, st.camera);
   const out = document.createElement('canvas');
   out.width = Math.round(size * aspect); out.height = size;
