@@ -9,7 +9,7 @@
   <meta property="og:description" content="Varje fat är kavlat, format och glaserat för hand i Mora. Inga två blir exakt likadana.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="sv_SE">
-  <meta property="og:image" content="https://arterauf.2w5gpvjy65.workers.dev/img/og.jpg?v=3">
+  <meta property="og:image" content="https://arterauf.2w5gpvjy65.workers.dev/img/og.jpg?v=4">
   <meta property="og:url" content="https://arterauf.2w5gpvjy65.workers.dev/">
   <meta name="theme-color" content="#F0E8DD">
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Marcellus&family=Reenie+Beanie&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <link rel="stylesheet" href="css/style.css?v=6">
   <link rel="modulepreload" href="js/vendor/three.js">
 </head>
 <body>
@@ -54,6 +54,7 @@
         <div class="hero__panel">
           <!-- 3D-fat: js/fat3d.js ritar Vika och Hemus här. Bilden visas om WebGL saknas. -->
           <div class="stage hero__stage" data-fat="vika+hemus" data-kind="hero">
+            <img class="stage__bg" src="img/bord-hero.webp" alt="" width="1375" height="1144">
             <img class="stage__img" src="img/hero-faten.webp" alt="Två handgjorda keramikfat: Vika, vit med rosa marmorering, och Hemus, salviagrön" width="1400" height="1400">
           </div>
           <p class="note hero__note" aria-hidden="true">dra i faten så snurrar de</p>
@@ -74,6 +75,7 @@
         <ul class="butik">
           <li class="vara" id="vika">
             <a class="stage vara__bild tile--vika" href="fat/vika" data-fat="vika" data-kind="product" aria-label="Vika, 349 kr">
+              <img class="stage__bg" src="img/bord-vika.webp" alt="" loading="lazy">
               <img class="stage__img" src="img/fat-vika.webp" alt="Vika, stort vågigt keramikfat i vit glasyr med rosa marmorering och svarta prickar" width="1000" height="1000" loading="lazy">
             </a>
             <div class="vara__info">
@@ -84,6 +86,7 @@
           </li>
           <li class="vara" id="gesunda">
             <a class="stage vara__bild tile--gesunda" href="fat/gesunda" data-fat="gesunda" data-kind="product" aria-label="Gesunda, 329 kr">
+              <img class="stage__bg" src="img/bord-gesunda.webp" alt="" loading="lazy">
               <img class="stage__img" src="img/fat-gesunda.webp" alt="Gesunda, långt vågigt serveringsfat i sandfärgad glasyr med prickar" width="1000" height="1000" loading="lazy">
             </a>
             <div class="vara__info">
@@ -94,6 +97,7 @@
           </li>
           <li class="vara" id="siljan">
             <a class="stage vara__bild tile--siljan" href="fat/siljan" data-fat="siljan" data-kind="product" aria-label="Siljan, 249 kr">
+              <img class="stage__bg" src="img/bord-siljan.webp" alt="" loading="lazy">
               <img class="stage__img" src="img/fat-siljan.webp" alt="Siljan, runt keramikfat med vågiga kanter i dimblå glasyr" width="1000" height="1000" loading="lazy">
             </a>
             <div class="vara__info">
@@ -104,6 +108,7 @@
           </li>
           <li class="vara" id="hemus">
             <a class="stage vara__bild tile--hemus" href="fat/hemus" data-fat="hemus" data-kind="product" aria-label="Hemus, 179 kr">
+              <img class="stage__bg" src="img/bord-hemus.webp" alt="" loading="lazy">
               <img class="stage__img" src="img/fat-hemus.webp" alt="Hemus, litet vågigt keramikfat i salviagrön glasyr" width="1000" height="1000" loading="lazy">
             </a>
             <div class="vara__info">
@@ -260,7 +265,7 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=5"></script>
-  <script type="module" src="js/fat3d.js?v=5"></script>
+  <script src="js/main.js?v=6"></script>
+  <script type="module" src="js/fat3d.js?v=6"></script>
 </body>
 </html>
