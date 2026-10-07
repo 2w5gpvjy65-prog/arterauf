@@ -87,30 +87,37 @@ Det här repot är en webbsida som **Elevora UF** bygger åt en kund. Varje kund
 
 - **Företag:** Artera UF · Instagram: [@arterauf](https://www.instagram.com/arterauf/) (inga inlägg ännu, okt 2026)
 - **Kontaktperson:** _[namn, mejl saknas]_. Fyra tjejer från Mora: Meja, Nora, Embla och Lilly (förnamn från Instagram-bion, bekräfta att de vill stå med)
-- **Säljer:** handgjorda keramikfat (kavlade plattor, därav kaveln i loggan)
+- **Säljer:** handgjorda keramikfat: kavlade lerplattor som draperas till vågiga, veckade fat (därav kaveln i loggan). Förebild: kundens foton på ett vitt fat med rosa marmorering och svarta prickar, och ett sandfärgat prickigt serveringsfat med en stor våg.
 - **Tjänst och pris:** Webbshop, UF-pris 1 200 kr. Sidan är också Elevoras visningsexempel.
 - **Domän:** _[domän.se saknas]_ · registrar: _[ ]_
 - **Stil:**
   - Allt utgår från loggan: en utkavlad lerplatta med en kavel. Den oregelbundna "lerplattan" är sidans formspråk (bakgrunder bakom faten är ojämna plattor, aldrig rundade kort).
-  - Färger: kalk `#F0E8DD` (loggans bakgrund, sidans botten), lera `#CFC0B0` (plattan), bränd `#2E2520` (text, knappar), sten `#73665C` (dämpad text), kavel `#B48A63` (trä, små detaljer). Glasyrfärger per fat: Siljan `#3F5A68`, Hemus `#6F7B58`, Gesunda `#E7DFD2` med järnprickar, Vika `#D2A39C`. **Ingen terrakotta.**
+  - Färger: kalk `#F0E8DD` (loggans bakgrund, sidans botten), lera `#CFC0B0` (plattan), bränd `#2E2520` (text, knappar), sten `#73665C` (dämpad text), kavel `#B48A63` (trä, små detaljer). Glasyrer i dova pastelltoner, aldrig klara färger: Vika vit `#F5F1ED` med rosa marmorering `#EAB8C5` och svarta prickar, Gesunda sand `#CEC3B5` med mörka och ljusa prickar, Siljan dimblå `#A5B2B9`, Hemus salviagrön `#A9B09D`. Plattorna bakom faten är ljusa toner av samma färger. **Ingen terrakotta.**
   - Typsnitt: Marcellus (romerska versaler som i loggans ordbild) för rubriker och produktnamn, Hanken Grotesk för brödtext, Reenie Beanie för några få handskrivna anteckningar (max 3–4 på sidan).
-  - Effekt: faten är riktiga 3D-modeller (Three.js, `js/fat3d.js` + `js/vendor/three.js`). De snurrar långsamt och vrids när man scrollar. Avsnittet "Så gör vi" visar hela processen på ett fat: kavla, forma och stämpla, skröjbränna, glasera, glasyrbränna. Statiska bilder i `img/fat-*.webp` visas om WebGL saknas.
+  - Effekt: faten är riktiga 3D-modeller (Three.js, `js/fat3d.js` + `js/vendor/three.js`): en kavlad platta med tjocklek och rundad kant som draperats till vågor och veck, med mjuka skuggor (VSM), marmorering, prickar och stämpel under. Formerna och glasyrerna ställs in i `FAT` överst i `js/fat3d.js`. Faten snurrar långsamt och vrids när man scrollar, och man kan dra i dem.
+  - "Så gör vi": lugn, scrollstyrd process på ett fat (Siljan). Varje steg är långt (cirka 120 % av skärmhöjden), förändringen sker i början och sedan står fatet still. Lätt inrastning (`scroll-snap` proximity) på stegens viloläge. Kameran rör sig långsamt i stället för fatet. Inget lysande eller studsande: ugnen visas som dämpat varmt ljus. Steg: kavla (kaveln rullar, kavelspår), forma (plattan draperas) och stämpla (kameran tittar in under fatet), torka (från kanten och inåt) och skröjbränna, glasera (doppas från ena sidan, kritvit och matt), glasyrbränna (blir glansig).
+  - "Reducera rörelse": inget snurrar av sig självt, faten vrids bara lugnt medan man scrollar, ingen tröghet, ingen kameraåkning i processen.
+  - Produktsidor `fat/<namn>.html`: stor 3D-vy med knappar (snett, ovanifrån, från sidan, undersidan), pris, Köp-knapp, fakta, frågor och "Fler fat". Startsidans fat leder hit (ett drag i fatet snurrar det, ett klick öppnar sidan). Statiska bilder i `img/fat-*.webp` visas om WebGL saknas.
   - Ton: rak, varm och personlig, skriven som tjejerna själva ("vi"). Inga säljfloskler.
 - **Konton (kundens):** GitHub _[ ]_ · Cloudflare _[ ]_ · Stripe _[ ]_ · Web3Forms _[ ]_
 - **Betalsätt:** kort, Klarna, Swish (keramikfat är tillåtet för Swish) · **Frakt:** 39 kr, PostNord, skickas inom 2 vardagar (standard, bekräfta med kunden. Keramik kan behöva dyrare paket)
-- **Produkter (förslag, byt mot riktiga):** Siljan, ovalt, blå 189 kr · Hemus, runt, grön 149 kr · Gesunda, avlångt, vit med prickar 229 kr · Vika, organisk form, rosa 169 kr
+- **Produkter (förslag, byt mot riktiga):** Vika, stort vågigt fat, vit med rosa marmor, ca 36 × 24 cm, 349 kr · Gesunda, långt serveringsfat, sand, ca 40 × 19 cm, 329 kr · Siljan, runt vågigt fat, dimblå, ca Ø 24 cm, 249 kr · Hemus, litet vågigt fat, salvia, ca 20 × 14 cm, 179 kr
 - **Stripe-länkar** (Elevora sandbox, redirect till `https://arterauf.2w5gpvjy65.workers.dev/kop-klart.html`):
   - Frakt 39 kr: `price_1UNgPlCygnkVBVd5XygxEKmY`
-  - Siljan 189 kr → https://buy.stripe.com/test_cNi6oG5d40JoaNJ7O1cbC04 → _livelänk_
-  - Hemus 149 kr → https://buy.stripe.com/test_7sY28qbBsgImg832tHcbC05 → _livelänk_
-  - Gesunda 229 kr → https://buy.stripe.com/test_aFa3cu0WObo27Bx6JXcbC06 → _livelänk_
-  - Vika 169 kr → https://buy.stripe.com/test_fZubJ0eNE9fU9JFd8lcbC07 → _livelänk_
+  - Vika 349 kr → https://buy.stripe.com/test_bJebJ0bBs8bQg83gkxcbC08 → _livelänk_
+  - Gesunda 329 kr → https://buy.stripe.com/test_cNi14m0WO63I4pl1pDcbC09 → _livelänk_
+  - Siljan 249 kr → https://buy.stripe.com/test_14AaEW490ajYcVR9W9cbC0a → _livelänk_
+  - Hemus 179 kr → https://buy.stripe.com/test_7sY00i6h89fU7Bx0lzcbC0b → _livelänk_
+  - De första testlänkarna (ovala fat med kant, okt 2026) är avstängda och produkterna arkiverade.
+  - Köp-knapparna finns på produktsidorna i `fat/`, inte på startsidan.
   - Produktbilder för Stripe finns i `img/stripe-*.jpg` (läggs på produkterna när sidan är publicerad, Stripe kräver publika adresser)
 - **Förhandsvisning:** https://arterauf.2w5gpvjy65.workers.dev (Cloudflare-konto 2w5gpvjy65, Elevoras under bygget). Vid lansering: byt `og:image`/`og:url` i index.html och redirect-adressen i Stripe-länkarna till kundens domän.
 - **Status:** första förslag
-- **Beslut och önskemål:** Inga produktbilder finns ännu, så faten visas som 3D-modeller. När tjejerna har riktiga foton: lägg dem i `img/` och visa dem i produktsektionen. 3D-faten kan finnas kvar i hero och "Så gör vi".
+- **Beslut och önskemål:** Inga egna produktbilder på sidan ännu, så faten visas som 3D-modeller som efterliknar kundens foton. När tjejerna har riktiga foton: lägg dem i `img/` och visa dem på produktsidorna (till exempel som bildgalleri under 3D-vyn). 3D-faten kan finnas kvar i hero och "Så gör vi".
+  - Användaren vill: realistiska fat (inte tecknade), dova pastellfärger (inte barnsliga), en lugn och långsam process, en produktsida före köpet och att allt fungerar med "Reducera rörelse" på iPhone.
   - Produktnamnen (platser runt Mora), priserna, måtten och texterna om processen är Elevoras förslag. Byt mot det tjejerna faktiskt säljer och gör.
   - Statiska bilder (`img/fat-*.webp`, `img/stripe-*.jpg`, `img/og.jpg`) är renderade från 3D-modellerna med funktionen `snapshot()` i `js/fat3d.js` (dubbel upplösning, nedskalad). Ändras ett fat: rendera om bilderna.
+  - Produktsidorna i `fat/` är skrivna med samma uppbyggnad. Ändras något på en, gör samma ändring på alla fyra.
   - `js/vendor/three.js` är en avskalad Three.js (r186) byggd en gång med esbuild. Det finns inget byggsteg för sidan.
   - Lokalt på Windows: kör `npx wrangler dev --port 8791 --persist-to <mapp utanför repot>`, annars laddar wrangler om i en loop (den bevakar sin egen `.wrangler`-mapp).
   - Testköp gjort 2026-10-07 (Siljan + frakt, 228 kr, kort 4242) i Elevora sandbox: betalningen gick igenom och skickade vidare till `kop-klart.html`.

@@ -20,7 +20,7 @@
 @media (min-width: 700px) { :root { --gutter: 40px; } }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { background: var(--kalk); scroll-behavior: smooth; scroll-padding-top: var(--header); -webkit-text-size-adjust: 100%; overflow-x: clip; }
+html { background: var(--kalk); scroll-behavior: smooth; scroll-padding-top: var(--header); scroll-snap-type: y proximity; -webkit-text-size-adjust: 100%; overflow-x: clip; }
 body { position: relative; margin: 0; background: var(--kalk); color: var(--brand); font-family: var(--sans); font-size: 1.0625rem; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-underline-offset: .2em; text-decoration-thickness: 1px; }
@@ -72,7 +72,9 @@ p { margin: 0 0 1em; }
 
 /* En "scen" är rutan där ett fat ritas. Plattan bakom är en ojämn lerplatta, som i loggan. */
 .stage { position: relative; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
-.stage[data-kind="hero"], .stage[data-kind="product"] { cursor: grab; }
+a.stage { display: block; color: inherit; }
+.stage[data-kind="hero"], .stage[data-kind="product"], .stage[data-kind="viewer"] { cursor: grab; }
+a.stage:focus-visible { outline-offset: -6px; }
 .stage.is-dragging { cursor: grabbing; }
 .slab { position: absolute; left: 3%; right: 3%; top: 16%; bottom: 6%; width: 94%; height: 78%; fill: var(--slab, var(--lera)); }
 .stage__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity .5s; }
@@ -119,10 +121,12 @@ p { margin: 0 0 1em; }
 }
 .fat__stage { aspect-ratio: 1 / .86; margin: 0 calc(var(--gutter) * -1) 8px; }
 @media (min-width: 700px) { .fat__stage { margin-inline: 0; } }
-.fat__stage--siljan { --slab: #C7D0CF; }
-.fat__stage--hemus { --slab: #CDD0BA; }
-.fat__stage--gesunda { --slab: #DCD2C5; }
-.fat__stage--vika { --slab: #E8D0C8; }
+.fat__stage--siljan { --slab: #D3DADB; }
+.fat__stage--hemus { --slab: #D7DACD; }
+.fat__stage--gesunda { --slab: #E1D8CC; }
+.fat__stage--vika { --slab: #E9DCD7; }
+.fat__info h3 a { text-decoration: none; }
+.fat__info h3 a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
 .fat__info { max-width: 32em; }
 .fat__info h3 { margin-bottom: .3em; }
 .fat__facts { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: 0 0 22px; font-size: .9375rem; }
@@ -141,11 +145,12 @@ p { margin: 0 0 1em; }
 .process__intro p { color: var(--sten-ljus); }
 .process__grid { display: grid; grid-template-columns: minmax(0, 1fr); }
 .process__stage { position: sticky; top: var(--header); z-index: 2; height: 50svh; margin: 0 calc(var(--gutter) * -1); background: var(--brand); --heat: 0; }
-.process__stage::before { content: ""; position: absolute; inset: 8% 10%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 128, 48, .5), rgba(255, 96, 24, .16) 60%, rgba(255, 96, 24, 0)); opacity: var(--heat); }
+.process__stage::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 70% at 20% 100%, rgba(214, 118, 52, .32), rgba(214, 118, 52, 0) 70%); opacity: var(--heat); }
 .process__stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: -40px; height: 40px; background: linear-gradient(var(--brand), rgba(46, 37, 32, 0)); }
 .process__stage .stage__img { padding: 8%; }
 .process__steps { list-style: none; margin: 0; padding: 0 0 16svh; position: relative; z-index: 1; }
-.step { min-height: 64svh; max-width: 30em; transition: opacity .4s; }
+.step { position: relative; min-height: 120svh; max-width: 30em; transition: opacity .5s; }
+.step__snap { position: absolute; left: 0; top: 80%; width: 1px; height: 1px; scroll-snap-align: start; scroll-margin-top: calc(50svh + 40px); }
 .step__body { position: sticky; top: calc(var(--header) + 50svh + 24px); padding-bottom: 24px; }
 .has-3d .step { opacity: .38; }
 .has-3d .step.is-active { opacity: 1; }
@@ -158,9 +163,10 @@ p { margin: 0 0 1em; }
   .process__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 48px; }
   .process__stage { order: 2; align-self: start; height: calc(100svh - var(--header)); margin: 0 calc(var(--gutter) * -1) 0 0; }
   .process__stage::after { display: none; }
-  .process__steps { order: 1; padding: 6svh 0 30svh; }
-  .step { min-height: 78svh; display: flex; flex-direction: column; justify-content: center; }
-  .step__body { position: static; padding: 0; }
+  .process__steps { order: 1; padding: 30vh 0 20vh; }
+  .step { min-height: 115vh; }
+  .step__body { top: calc(50vh - 80px); padding: 0; }
+  .step__snap { scroll-margin-top: calc(55vh - var(--header)); }
 }
 
 /* Om oss */
@@ -178,12 +184,12 @@ p { margin: 0 0 1em; }
 .faq { padding: 88px 0; }
 .faq__grid { display: grid; gap: 8px 48px; }
 .faq__list { border-top: 1px solid rgba(46, 37, 32, .16); max-width: 40em; }
-.faq details { border-bottom: 1px solid rgba(46, 37, 32, .16); }
-.faq summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 0; cursor: pointer; list-style: none; font-weight: 500; font-size: 1.125rem; }
-.faq summary::-webkit-details-marker { display: none; }
-.faq summary::after { content: ""; flex: none; width: 12px; height: 12px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-3px) rotate(45deg); transition: transform .25s; }
-.faq details[open] summary::after { transform: translateY(3px) rotate(-135deg); }
-.faq details p { margin: -4px 0 22px; max-width: 34em; color: var(--sten); }
+.faq__list details { border-bottom: 1px solid rgba(46, 37, 32, .16); }
+.faq__list summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 0; cursor: pointer; list-style: none; font-weight: 500; font-size: 1.125rem; }
+.faq__list summary::-webkit-details-marker { display: none; }
+.faq__list summary::after { content: ""; flex: none; width: 12px; height: 12px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-3px) rotate(45deg); transition: transform .25s; }
+.faq__list details[open] summary::after { transform: translateY(3px) rotate(-135deg); }
+.faq__list details p { margin: -4px 0 22px; max-width: 34em; color: var(--sten); }
 @media (min-width: 900px) {
   .faq { padding: 140px 0; }
   .faq__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
@@ -211,6 +217,46 @@ p { margin: 0 0 1em; }
 .footer__credit { margin-left: auto !important; }
 @media (max-width: 700px) { .footer__credit { margin-left: 0 !important; width: 100%; } }
 
+/* Produktsida: stor 3D-vy till vänster, allt om fatet till höger */
+.produkt { padding: 16px 0 0; }
+.produkt__grid { display: grid; gap: 8px 64px; }
+.produkt__stage { aspect-ratio: 1 / .92; margin: 0 calc(var(--gutter) * -1); }
+.produkt__views { display: flex; flex-wrap: wrap; gap: 2px 16px; justify-content: center; margin: 4px 0 8px; }
+.produkt__views button { display: none; background: none; border: 0; padding: 10px 2px; font: inherit; font-size: .9375rem; color: var(--sten); cursor: pointer; border-bottom: 1px solid transparent; }
+.has-3d .produkt__views button { display: block; }
+.produkt__views button[aria-pressed="true"] { color: var(--brand); border-bottom-color: var(--brand); }
+.produkt__views button:hover { color: var(--brand); }
+.crumbs { margin: 8px 0 18px; font-size: .9375rem; }
+.crumbs a { color: var(--sten); }
+.produkt__info h1 { font-size: clamp(2.75rem, 6vw, 4.6rem); margin-bottom: .1em; }
+.produkt__price { font-family: var(--serif); font-size: 1.75rem; margin: 0 0 18px; }
+.produkt__info .lead { margin-bottom: 26px; }
+.produkt__buy { width: 100%; min-height: 56px; font-size: 1.0625rem; }
+.produkt__ship { margin: 14px 0 36px; font-size: .9375rem; color: var(--sten); }
+.produkt__text { max-width: 34em; }
+.produkt__facts { display: grid; gap: 0; margin: 28px 0 36px; border-top: 1px solid rgba(46, 37, 32, .16); }
+.produkt__facts div { display: grid; grid-template-columns: 8.5em 1fr; gap: 12px; padding: 13px 0; border-bottom: 1px solid rgba(46, 37, 32, .16); font-size: .9375rem; }
+.produkt__facts dt { color: var(--sten); }
+.produkt__facts dd { margin: 0; }
+.produkt__more { margin-bottom: 16px; }
+@media (min-width: 700px) { .produkt__stage { margin-inline: 0; } }
+@media (min-width: 900px) {
+  .produkt { padding-top: 40px; }
+  .produkt__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; }
+  .produkt__media { position: sticky; top: calc(var(--header) + 24px); }
+  .produkt__buy { width: auto; padding-inline: 44px; }
+}
+.fler { padding: 72px 0 96px; }
+.fler h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); }
+.fler__list { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.fler__item { display: block; text-decoration: none; }
+.fler__img { position: relative; display: block; aspect-ratio: 1; margin-bottom: 10px; }
+.fler__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: transform .4s; }
+.fler__item:hover .fler__img img { transform: rotate(-4deg); }
+.fler__name { display: block; font-family: var(--serif); font-size: 1.35rem; }
+.fler__price { color: var(--sten); font-size: .9375rem; }
+@media (max-width: 600px) { .fler__list { gap: 10px; } .fler__name { font-size: 1.1rem; } }
+
 /* Enkla undersidor: tack, köp klart, köpvillkor, 404 */
 .page { min-height: 100svh; display: flex; flex-direction: column; }
 .page__top { padding: 20px 0; }
@@ -225,5 +271,6 @@ p { margin: 0 0 1em; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .step, .stage__img, .btn, .nav-toggle span { transition: none; }
+  .step, .stage__img, .btn, .nav-toggle span, .fler__img img { transition: none; }
+  .fler__item:hover .fler__img img { transform: none; }
 }
