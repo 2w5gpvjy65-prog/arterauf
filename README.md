@@ -22,6 +22,7 @@ Mall för varje ny kundsida. Skapa ett nytt repo med **Use this template**, så 
 - [ ] Kunden har bjudit in Elevora som collaborator (GitHub) och member (Cloudflare) om de köper löpande uppdateringar.
 - [ ] Kundens Cloudflare kopplat till kundens repo. Domänen tillagd (namnservrar bytta, gamla A-poster borttagna, Custom Domain för domän + www).
 - [ ] Web3Forms-nyckel och Stripe Payment Links är kundens egna. Inga `buy.stripe.com/test_`-länkar kvar.
+- [ ] Har sidan kundvagn (worker/index.js): Stripe-nyckeln `STRIPE_SECRET_KEY` i Cloudflare är kundens egen, helst en begränsad nyckel med bara "Checkout Sessions: Write".
 - [ ] Köpvillkor ifyllda (namn, mejl, frakt, leveranstid).
 - [ ] Ett riktigt testköp gjort tillsammans med kunden, ordermejlet kom fram, köpet återbetalat.
 - [ ] Mobil och dator kontrollerade.

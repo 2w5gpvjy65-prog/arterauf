@@ -1,9 +1,15 @@
 // Cloudflare: publicerar sidan som statiska filer. Byt "name" till kundens projektnamn.
+// worker/index.js tar bara hand om /api/kassa (kundvagnen till Stripe), allt annat är vanliga filer.
+// Stripes hemliga nyckel läggs in som hemlighet STRIPE_SECRET_KEY i Cloudflare, aldrig här.
 {
   "name": "arterauf",
+  "main": "worker/index.js",
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": ".",
-    "not_found_handling": "404-page"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true }
 }
