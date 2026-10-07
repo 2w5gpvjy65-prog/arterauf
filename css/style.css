@@ -120,41 +120,51 @@ a.stage:focus-visible { outline-offset: -6px; }
   .hero__note { right: 32px; top: 28px; }
 }
 
-/* Faten: butiksrutor i dova färger */
-.faten { padding: 72px 0 88px; }
-.faten__head { display: grid; gap: 4px 48px; margin-bottom: 32px; }
+/* Faten: produktfotona lagom stora med mycket luft runt, högra kolumnen förskjuten nedåt som i en katalog */
+.faten { padding: 72px 0 96px; }
+.faten__head { display: grid; gap: 4px 24px; margin-bottom: 40px; }
 .faten__head p { max-width: 30em; margin: 0; }
-@media (min-width: 900px) {
-  .faten { padding: 120px 0 120px; }
-  .faten__head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: end; margin-bottom: 48px; }
-  .faten__head h2 { margin: 0; }
-}
-.butik { list-style: none; margin: 0; padding: 0; display: grid; gap: 40px 20px; }
-@media (min-width: 700px) { .butik { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.vara__bild { display: block; aspect-ratio: 697 / 549; overflow: hidden; margin: 0 calc(var(--gutter) * -1); background: var(--lera); }
-.vara__bild img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
-.vara__bild:hover img { transform: scale(1.03); }
-@media (min-width: 700px) { .vara__bild { margin: 0; } }
-.vara__info { display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; align-items: baseline; padding-top: 14px; }
-.vara__info h3 { margin: 0; }
+.butik { list-style: none; margin: 0; padding: 0; display: grid; gap: 56px; }
+.vara { width: 86%; }
+.vara:nth-child(even) { justify-self: end; }
+.vara__bild { display: block; aspect-ratio: 697 / 549; overflow: hidden; background: var(--lera); }
+.vara__bild img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s; }
+.vara__bild:hover img { transform: scale(1.025); }
+.vara__info { display: grid; grid-template-columns: 1fr auto; gap: 0 16px; align-items: baseline; padding-top: 16px; }
+.vara__info h3 { margin: 0; font-size: 1.55rem; }
 .vara__info h3 a { text-decoration: none; }
 .vara__info h3 a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
-.vara__pris { font-family: var(--serif); font-size: 1.4rem; margin: 0; }
+.vara__pris { font-size: 1rem; margin: 0; }
 .vara__text { grid-column: 1 / -1; margin: 2px 0 0; color: var(--sten); font-size: .9375rem; }
-.faten__ship { margin: 48px 0 0; color: var(--sten); max-width: 36em; }
-
-/* På nära håll: närbilder på glasyrerna, kant i kant */
-.glasyr { padding: 0 0 88px; }
-.glasyr__head { display: grid; gap: 4px 48px; margin-bottom: 28px; }
-.glasyr__head p { max-width: 32em; margin: 0; }
-.glasyr__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.glasyr__list li { position: relative; aspect-ratio: 1; overflow: hidden; }
-.glasyr__list img { width: 100%; height: 100%; object-fit: cover; }
+.faten__ship { margin: 56px 0 0; color: var(--sten); max-width: 36em; }
+@media (min-width: 700px) {
+  .butik { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 0 24px; }
+  .vara { width: auto; grid-column: 1 / span 6; }
+  .vara:nth-child(even) { grid-column: 7 / span 6; justify-self: stretch; margin-top: 88px; }
+}
 @media (min-width: 900px) {
-  .glasyr { padding-bottom: 140px; }
-  .glasyr__head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: end; margin-bottom: 40px; }
-  .glasyr__head h2 { margin: 0; }
-  .glasyr__list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .faten { padding: 128px 0 120px; }
+  .faten__head { grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: end; margin-bottom: 64px; }
+  .faten__head h2 { grid-column: 1 / span 6; margin: 0; }
+  .faten__head p { grid-column: 8 / span 5; }
+  .vara { grid-column: 1 / span 5; }
+  .vara:nth-child(even) { grid-column: 8 / span 5; margin-top: 120px; }
+}
+
+/* På nära håll: närbilder på glasyrerna med text under */
+.glasyr { padding: 0 0 96px; }
+.glasyr__head { display: grid; gap: 4px 24px; margin-bottom: 32px; }
+.glasyr__head p { max-width: 32em; margin: 0; }
+.glasyr__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 14px; }
+.glasyr__list img { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--lera); }
+.glasyr__cap { display: block; margin-top: 10px; font-size: .875rem; color: var(--sten); line-height: 1.4; }
+.glasyr__cap b { display: block; font-family: var(--serif); font-weight: 400; font-size: 1.125rem; color: var(--brand); }
+@media (min-width: 900px) {
+  .glasyr { padding-bottom: 150px; }
+  .glasyr__head { grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: end; margin-bottom: 48px; }
+  .glasyr__head h2 { grid-column: 1 / span 6; margin: 0; }
+  .glasyr__head p { grid-column: 8 / span 5; }
+  .glasyr__list { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
 }
 
 /* Så gör vi: mörkt som en ugn. Fatet ligger fast medan stegen scrollar förbi. */
@@ -239,10 +249,10 @@ a.stage:focus-visible { outline-offset: -6px; }
 @media (max-width: 700px) { .footer__credit { margin-left: 0 !important; width: 100%; } }
 
 /* Produktsida: galleri till vänster (hela fatet i 3D, undersidan och en närbild), allt om fatet till höger */
-.produkt { padding: 0; }
+.produkt { padding: 16px 0 0; }
 .produkt__grid { display: grid; gap: 24px 56px; }
 /* Galleri: produktfotot stort överst, under det fatet i 3D, en närbild och undersidan */
-.galleri { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 0 calc(var(--gutter) * -1); }
+.galleri { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .galleri__foto { grid-column: 1 / -1; margin: 0; aspect-ratio: 697 / 549; overflow: hidden; background: var(--lera); }
 .galleri__foto img { width: 100%; height: 100%; object-fit: cover; }
 .galleri__3d { grid-column: 1 / -1; aspect-ratio: 1 / .8; }
@@ -252,7 +262,7 @@ a.stage:focus-visible { outline-offset: -6px; }
 .has-3d .galleri__hint { opacity: 1; }
 @media (min-width: 700px) {
   .produkt { padding-top: 24px; }
-  .galleri { margin: 0; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .galleri { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
   .galleri__3d { grid-column: auto; aspect-ratio: 1; }
 }
 .crumbs { margin: 4px 0 14px; font-size: .9375rem; }
@@ -276,14 +286,14 @@ a.stage:focus-visible { outline-offset: -6px; }
 }
 .fler { padding: 72px 0 96px; }
 .fler h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); }
-.fler__list { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.fler__list { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
 .fler__item { display: block; text-decoration: none; }
 .fler__img { position: relative; display: block; aspect-ratio: 697 / 549; margin-bottom: 10px; overflow: hidden; background: var(--lera); }
 .fler__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
 .fler__item:hover .fler__img img { transform: scale(1.04); }
 .fler__name { display: block; font-family: var(--serif); font-size: 1.35rem; }
 .fler__price { color: var(--sten); font-size: .9375rem; }
-@media (max-width: 600px) { .fler__list { gap: 8px; } .fler__name { font-size: 1.1rem; } }
+@media (max-width: 600px) { .fler__list { gap: 14px; } .fler__name { font-size: 1.1rem; } }
 
 /* Enkla undersidor: tack, köp klart, köpvillkor, 404 */
 .page { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
