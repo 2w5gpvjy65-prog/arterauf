@@ -718,57 +718,52 @@ function init() {
     st.ground.material.opacity = 0.5;
   }
 
-  // "Så gör vi": P går från 0 till 5, ett heltal per steg. När ett steg kommer fram spelas dess förändring upp
-  // i en lugn, fast takt (cirka 3 sekunder per steg) hur snabbt man än scrollar. Sedan står fatet still.
+  // "Så gör vi": P går från 0 till 5, ett heltal per steg, och följer scrollen. Stegen är korta, så rörelserna
+  // är små och sker på en kort bit av varje steg. Då ser det lugnt ut även när man scrollar fort förbi.
   function updateProcess(st, dt) {
-    const line = W < 900 ? st.el.getBoundingClientRect().bottom + 40 : H * 0.62;
-    let active = -1;
-    st.steps.forEach((s, i) => { if (s.getBoundingClientRect().top < line) active = i; });
+    const line = W < 900 ? st.el.getBoundingClientRect().bottom + 12 : H * 0.62;
+    let target = 0, active = -1;
+    st.steps.forEach((s, i) => {
+      const r = s.getBoundingClientRect(), k = clamp((line - r.top) / r.height);
+      target += k;
+      if (k > 0) active = i;
+    });
     st.steps.forEach((s, i) => s.classList.toggle('is-active', i === Math.max(0, active)));
-    const target = active + 1;
-    if (still) { st.p = target; st.pv = 0; }
-    else {
-      // ligger fatet mer än ett steg efter går det lite fortare, men aldrig ryckigt
-      const d = target - st.p, speed = 0.34 * (1 + 0.4 * Math.max(0, Math.abs(d) - 1));
-      const want = Math.sign(d) * Math.min(speed, Math.abs(d) * 1.2);
-      st.pv += (want - st.pv) * (1 - Math.exp(-dt * 3));
-      st.p += st.pv * dt;
-      if (Math.abs(target - st.p) < 0.002 && Math.abs(st.pv) < 0.01) { st.p = target; st.pv = 0; }
-    }
+    // följer scrollen nästan direkt, bara utjämnat så att det inte hackar
+    st.p += (target - st.p) * (1 - Math.exp(-dt * (still ? 14 : 8)));
     const P = st.p, T = st.platter, u = T.u;
-    // 1 kavla
-    // kaveln rullar bakifrån och fram, lyfts sedan och tonar bort innan steget står still
-    const roll = easeIO(seg(P, 0.08, 0.52)), pinOut = easeIO(seg(P, 0.52, 0.76));
-    u.uPinZ.value = lerp(-1.75, 1.75, roll);
+    // 1 kavla: kaveln tonar fram, rullar en kort bit över plattan och tonar bort. Plattan blir jämn och tunn.
+    const roll = easeIO(seg(P, 0.1, 0.6)), pinIn = ease(seg(P, 0, 0.12)), pinOut = ease(seg(P, 0.6, 0.8));
+    u.uPinZ.value = lerp(-1.9, 1.9, roll);
     u.uLump.value = 1;
     u.uMarks.value = lerp(1, 0.3, ease(seg(P, 1.1, 1.5)));
-    T.root.scale.set(lerp(0.95, 1, roll), lerp(1.3, 1, roll), lerp(0.95, 1, roll));
-    const pinR = 0.2, pz = lerp(-1.75, 1.75, roll);
-    st.pin.roll.position.set(0, 0.06 * T.root.scale.y + pinR + pinOut * 0.8, pz + pinOut * 0.6);
+    T.root.scale.set(lerp(0.97, 1, roll), lerp(1.12, 1, roll), lerp(0.97, 1, roll));
+    const pinR = 0.2, pz = lerp(-0.55, 0.55, roll), pinA = pinIn * (1 - pinOut);
+    st.pin.roll.position.set(0, 0.06 * T.root.scale.y + pinR, pz);
     st.pin.roll.rotation.x = pz / pinR;
-    st.pin.mesh.material.opacity = 1 - pinOut;
-    st.pin.mesh.castShadow = pinOut < 0.5;
-    st.pin.visible = P < 0.78;
+    st.pin.mesh.material.opacity = pinA;
+    st.pin.mesh.castShadow = pinA > 0.5;
+    st.pin.visible = pinA > 0.01;
     // 2 forma och stämpla: plattan läggs över en form och får sina vågor (stämpeln trycks in under fatet)
-    const lift = easeIO(seg(P, 1.1, 1.55));
+    const lift = easeIO(seg(P, 1.1, 1.6));
     T.setLift(lift);
     u.uStampOn.value = ease(seg(P, 1.66, 1.76));
     // 3 torka och skröjbränna
     u.uDry.value = ease(seg(P, 2.1, 2.45));
-    const kiln1 = bell(P, 2.48, 2.66, 2.92);
-    u.uBisque.value = ease(seg(P, 2.56, 2.82));
+    const kiln1 = bell(P, 2.45, 2.65, 2.9);
+    u.uBisque.value = ease(seg(P, 2.5, 2.8));
     // 4 glasera
     u.uGlaze.value = easeIO(seg(P, 3.1, 3.7));
     // 5 glasyrbränna
-    const kiln2 = bell(P, 4.04, 4.3, 4.72);
-    u.uFired.value = ease(seg(P, 4.3, 4.7));
-    // ugnsljus: rummet mörknar och lyses upp varmt från sidan, fatet självt lyser inte
-    const k = Math.max(kiln1, kiln2);
-    st.key.intensity = lerp(0.5, 0.2, k);
+    const kiln2 = bell(P, 4.05, 4.3, 4.65);
+    u.uFired.value = ease(seg(P, 4.25, 4.65));
+    // ugnsljus: rummet mörknar lite och lyses upp varmt från sidan. Svagt, så att det inte blinkar när man scrollar fort.
+    const k = Math.max(kiln1, kiln2) * 0.7;
+    st.key.intensity = lerp(0.5, 0.25, k);
     st.key.color.copy(st.keyBase).lerp(st.keyWarm, k);
-    st.sol.intensity = lerp(st.solBase, 0.5, k);
-    st.kiln.intensity = k * 6;
-    st.scene.environmentIntensity = lerp(0.36, 0.1, k);
+    st.sol.intensity = lerp(st.solBase, 0.8, k);
+    st.kiln.intensity = k * 5;
+    st.scene.environmentIntensity = lerp(0.36, 0.16, k);
     st.el.style.setProperty('--heat', k.toFixed(3));
     T.setYaw(0.3);
   }

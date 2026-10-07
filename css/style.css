@@ -214,8 +214,8 @@ a.stage:focus-visible { outline-offset: -6px; }
 .process__stage .stage__img { padding: 8%; }
 .process__wrap { position: relative; z-index: 1; }
 .process__steps { list-style: none; margin: 0; padding: 0 0 12vh; }
-.step { position: relative; min-height: 62vh; min-height: 62svh; max-width: 30em; transition: opacity .5s; }
-.step:last-child { min-height: 80vh; min-height: 80svh; }
+.step { position: relative; min-height: 36vh; min-height: 36svh; max-width: 30em; transition: opacity .3s; }
+.step:last-child { min-height: 50vh; min-height: 50svh; }
 .step__body { position: sticky; top: calc(var(--header) + 36vh + 24px); top: calc(var(--header) + 36svh + 24px); padding-bottom: 24px; }
 .has-3d .step { opacity: .38; }
 .has-3d .step.is-active { opacity: 1; }
@@ -229,9 +229,9 @@ a.stage:focus-visible { outline-offset: -6px; }
   .process__stage { height: calc(100vh - var(--header)); height: calc(100svh - var(--header)); }
   /* stegen ligger som kort nere till vänster på fotot, ovanför 3D-lagret */
   .process__wrap { z-index: 6; margin-top: calc(var(--header) - 100vh); margin-top: calc(var(--header) - 100svh); }
-  .process__steps { padding: 0 0 6vh; }
-  .step { min-height: 70vh; min-height: 70svh; }
-  .step:last-child { min-height: 100vh; min-height: 100svh; }
+  .process__steps { padding: 42vh 0 6vh; padding: 42svh 0 6svh; }
+  .step { min-height: 40vh; min-height: 40svh; }
+  .step:last-child { min-height: 60vh; min-height: 60svh; }
   .step__body { top: calc(var(--header) + (100vh - var(--header)) * .52); top: calc(var(--header) + (100svh - var(--header)) * .52); max-width: 23em; padding: 24px 28px 26px; background: rgba(30, 23, 19, .78); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-radius: 2px; }
   .has-3d .step { opacity: 0; }
   .has-3d .step.is-active { opacity: 1; }
