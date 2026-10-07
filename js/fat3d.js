@@ -5,7 +5,7 @@
 // Saknas WebGL ligger bilderna i img/fat-*.webp kvar. Bilderna tas fram med samma kod (se snapshot längst ner).
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, BufferGeometry, BufferAttribute, PlaneGeometry, LatheGeometry,
-  MeshPhysicalMaterial, MeshStandardMaterial, MeshBasicMaterial, ShadowMaterial, DirectionalLight, PointLight, Color, Vector2, Vector3,
+  MeshPhysicalMaterial, MeshStandardMaterial, MeshBasicMaterial, ShadowMaterial, DirectionalLight, PointLight, SpotLight, Color, Vector2, Vector3,
   CanvasTexture, PMREMGenerator, NeutralToneMapping, SRGBColorSpace, VSMShadowMap, PCFShadowMap, BoxGeometry, BackSide
 } from './vendor/three.js';
 
@@ -211,23 +211,37 @@ float fbm(vec3 p) { float a = 0.5, s = 0.0; for (int i = 0; i < 4; i++) { s += a
 #endif
 `;
 
+// Stämpeln ritas i 1024 px och mjukas upp lite, så att kanterna blir avfasade som i riktig lera.
 let stampTex = null;
-function stampTexture() {
-  if (stampTex) return stampTex;
-  const c = document.createElement('canvas'); c.width = c.height = 256;
-  const g = c.getContext('2d');
-  g.fillStyle = '#000'; g.fillRect(0, 0, 256, 256);
-  g.strokeStyle = g.fillStyle = '#fff'; g.lineWidth = 5;
-  g.beginPath(); g.arc(128, 128, 92, 0, TAU); g.stroke();
-  g.font = '600 30px Marcellus, Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+function drawStamp(c) {
+  const S = 1024, k = S / 256, g = c.getContext('2d');
+  const sharp = document.createElement('canvas'); sharp.width = sharp.height = S;
+  const h = sharp.getContext('2d');
+  h.fillStyle = '#000'; h.fillRect(0, 0, S, S);
+  h.strokeStyle = h.fillStyle = '#fff'; h.lineWidth = 5 * k;
+  h.beginPath(); h.arc(128 * k, 128 * k, 92 * k, 0, TAU); h.stroke();
+  h.font = `400 ${31 * k}px Marcellus, Georgia, serif`; h.textAlign = 'center'; h.textBaseline = 'middle';
   const word = 'ARTERA';
   [...word].forEach((ch, i) => {
     const a = -Math.PI / 2 + (i - (word.length - 1) / 2) * 0.36;
-    g.save(); g.translate(128 + Math.cos(a) * 66, 128 + Math.sin(a) * 66); g.rotate(a + Math.PI / 2); g.fillText(ch, 0, 0); g.restore();
+    h.save(); h.translate((128 + Math.cos(a) * 66) * k, (128 + Math.sin(a) * 66) * k); h.rotate(a + Math.PI / 2); h.fillText(ch, 0, 0); h.restore();
   });
-  g.font = '600 26px Marcellus, Georgia, serif'; g.fillText('UF', 128, 132);
-  g.font = '500 17px Georgia, serif'; g.fillText('MORA', 128, 196);
+  h.font = `400 ${27 * k}px Marcellus, Georgia, serif`; h.fillText('UF', 128 * k, 132 * k);
+  h.font = `400 ${18 * k}px Marcellus, Georgia, serif`; h.fillText('MORA', 128 * k, 196 * k);
+  // mjuk kant: ner till halva storleken och tillbaka
+  const half = document.createElement('canvas'); half.width = half.height = S / 2;
+  const hg = half.getContext('2d'); hg.imageSmoothingQuality = 'high'; hg.drawImage(sharp, 0, 0, S / 2, S / 2);
+  g.imageSmoothingQuality = 'high';
+  g.drawImage(half, 0, 0, S, S);
+}
+function stampTexture() {
+  if (stampTex) return stampTex;
+  const c = document.createElement('canvas'); c.width = c.height = 1024;
+  drawStamp(c);
   stampTex = new CanvasTexture(c);
+  stampTex.anisotropy = 4;
+  // rita om när typsnittet Marcellus har laddats
+  if (document.fonts && document.fonts.load) document.fonts.load('400 120px Marcellus').then(() => { drawStamp(c); stampTex.needsUpdate = true; }).catch(() => {});
   return stampTex;
 }
 
@@ -410,6 +424,110 @@ diffuseColor.rgb = mix(vec3(0.58, 0.37, 0.2), vec3(0.4, 0.23, 0.11), ring * 0.55
   return g;
 }
 
+// Ett ekbord av plankor, som på ett riktigt produktfoto. Långt bort blir bordet mjukt oskarpt (som med en kamera).
+function woodTable() {
+  const u = { uFocus: { value: 10 } };
+  const m = new MeshStandardMaterial({ color: 0xffffff, roughness: 0.6, metalness: 0 });
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.uFocus = u.uFocus;
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vW;')
+      .replace('#include <project_vertex>', 'vW = (modelMatrix * vec4(transformed, 1.0)).xyz;\n#include <project_vertex>');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
+uniform float uFocus;
+varying vec3 vW;
+float tRough;
+${GLSL_NOISE}
+vec3 woodColor(out float bump) {
+  float pw = 1.75;
+  vec2 wp = vec2(vW.x * 0.906 - vW.z * 0.423, vW.x * 0.423 + vW.z * 0.906);
+  float pz = wp.y / pw + 0.37, plank = floor(pz), fz = fract(pz);
+  float rnd = aHash(vec3(plank, 3.1, 7.7));
+  float x = wp.x * 0.55 + rnd * 37.0, y = (fz - 0.5) * pw;
+  float n = fbm(vec3(x * 0.35, y * 3.2, rnd * 9.0));
+  float rings = fract(y * 2.6 + n * 2.4 + sin(x * 0.45 + rnd * 6.0) * 0.35);
+  float ring = smoothstep(0.0, 0.22, rings) * (1.0 - smoothstep(0.4, 0.98, rings));
+  float streak = vnoise(vec3(x * 0.6, y * 30.0, rnd * 3.0)) * 0.6 + vnoise(vec3(x * 1.7, y * 75.0, rnd * 5.0)) * 0.4;
+  float pores = vnoise(vec3(x * 6.0, y * 120.0, rnd));
+  float tone = fbm(vec3(x * 0.12, y * 0.9, rnd * 4.0));
+  vec3 light = vec3(0.30, 0.185, 0.095), dark = vec3(0.13, 0.072, 0.035);
+  vec3 col = mix(light, dark, clamp(ring * 0.28 + streak * 0.34 + pores * 0.14 + (tone - 0.5) * 0.5, 0.0, 1.0));
+  col *= 0.86 + 0.28 * rnd;
+  // kvistar här och där
+  vec2 kc = vec2(floor(wp.x / 4.0) * 4.0 + 2.0 + (aHash(vec3(plank, 9.0, 1.0)) - 0.5) * 2.5, (plank + 0.5 - 0.37) * pw);
+  float kd = length((wp - kc) * vec2(1.0, 2.2));
+  float knot = step(0.6, aHash(vec3(plank, floor(wp.x / 4.0), 4.0))) * (1.0 - smoothstep(0.04, 0.12, kd));
+  col = mix(col, dark * 0.7, knot);
+  float seam = smoothstep(0.0, 0.01, fz) * (1.0 - smoothstep(0.99, 1.0, fz));
+  col *= mix(0.32, 1.0, seam);
+  bump = (ring * 0.6 + streak * 0.3 + pores * 0.25) * 0.0016 - (1.0 - seam) * 0.004;
+  tRough = 0.5 + 0.2 * streak;
+  // långt bort: mindre detaljer, som när kameran fokuserar på fatet
+  float far = smoothstep(uFocus * 0.95, uFocus * 1.8, length(vViewPosition));
+  col = mix(col, mix(light, dark, 0.32) * (0.86 + 0.28 * rnd), far * 0.8);
+  bump *= 1.0 - far;
+  return col;
+}
+vec3 woodBump(vec3 nrm, float h) {
+  vec3 dpdx = dFdx(-vViewPosition), dpdy = dFdy(-vViewPosition);
+  float dhdx = dFdx(h), dhdy = dFdy(h);
+  vec3 r1 = cross(dpdy, nrm), r2 = cross(nrm, dpdx);
+  float det = dot(dpdx, r1);
+  return normalize(abs(det) * nrm - sign(det) * (dhdx * r1 + dhdy * r2));
+}
+float gWoodH;`)
+      .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb = woodColor(gWoodH);')
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = tRough;')
+      .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\nnormal = woodBump(normal, gWoodH);');
+  };
+  if (lowQuality) m.defines = { LOWQ: '' };
+  m.customProgramCacheKey = () => 'artera-bord-1';
+  const mesh = new Mesh(new PlaneGeometry(70, 70), m);
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.position.y = -0.001;
+  mesh.receiveShadow = true;
+  mesh.userData.u = u;
+  return mesh;
+}
+
+// Ljusmönster för solen: fönsterkarm och en kvist med smala blad (som på ett sommarbord)
+let goboTex = null;
+function goboTexture() {
+  if (goboTex) return goboTex;
+  const S = 1024, c = document.createElement('canvas'); c.width = c.height = S;
+  const g = c.getContext('2d'), r = rng(77);
+  g.fillStyle = '#fff'; g.fillRect(0, 0, S, S);
+  g.fillStyle = 'rgb(28,24,22)';
+  // fönsterkarm: ett lodrätt och ett vågrätt spröjs, lite utanför mitten
+  g.fillRect(S * 0.76, 0, S * 0.05, S);
+  g.fillRect(0, S * 0.22, S, S * 0.04);
+  // kvistar med smala olivblad uppe till vänster och längs ena kanten
+  const branch = (x0, y0, ang, len, n) => {
+    g.save(); g.translate(x0, y0); g.rotate(ang);
+    g.lineWidth = 5; g.strokeStyle = 'rgb(28,24,22)';
+    g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(len * 0.5, len * 0.08, len, 0); g.stroke();
+    for (let i = 0; i < n; i++) {
+      const t = 0.12 + i / n * 0.86, side = i % 2 ? 1 : -1;
+      g.save(); g.translate(len * t, len * 0.04 * Math.sin(t * 3));
+      g.rotate(side * (0.55 + r() * 0.5));
+      g.beginPath(); g.ellipse(46 + r() * 12, 0, 46 + r() * 18, 9 + r() * 5, 0, 0, TAU); g.fill();
+      g.restore();
+    }
+    g.restore();
+  };
+  branch(-30, S * 0.08, 0.35, S * 0.62, 26);
+  branch(S * 0.1, S * 0.42, -0.08, S * 0.36, 16);
+  branch(-20, S * 0.7, -0.25, S * 0.5, 20);
+  branch(S * 1.02, S * 0.6, -2.85, S * 0.34, 14);
+  branch(S * 0.95, S * 1.0, -2.5, S * 0.36, 14);
+  // mjuka skuggkanter: ner och upp i storlek
+  const small = document.createElement('canvas'); small.width = small.height = S / 8;
+  const sg = small.getContext('2d'); sg.imageSmoothingQuality = 'high'; sg.drawImage(c, 0, 0, S / 8, S / 8);
+  g.clearRect(0, 0, S, S); g.imageSmoothingQuality = 'high'; g.drawImage(small, 0, 0, S, S);
+  goboTex = new CanvasTexture(c);
+  goboTex.colorSpace = SRGBColorSpace;
+  return goboTex;
+}
+
 function studio() {
   const s = new Scene();
   const panel = (w, h, c, pos, look) => { const m = new Mesh(new PlaneGeometry(w, h), new MeshBasicMaterial({ color: new Color(...c) })); m.position.set(...pos); m.lookAt(...look); s.add(m); };
@@ -434,7 +552,7 @@ const COMPS = {
   'vika+hemus': [{ id: 'vika', x: -0.6, z: -0.45, yaw: 0.25 }, { id: 'hemus', x: 1.5, z: 0.95, yaw: -0.9 }],
 };
 
-function buildScene(renderer, name, kind) {
+function buildScene(renderer, name, kind, table = kind !== 'process') {
   const scene = new Scene();
   scene.environment = environment(renderer);
   scene.environmentIntensity = 0.55;
@@ -472,10 +590,33 @@ function buildScene(renderer, name, kind) {
   const under = new DirectionalLight(0xfff3e8, 0);
   under.position.set(0.6, -4, 2.5);
   scene.add(under);
-  const ground = new Mesh(new PlaneGeometry(S * 1.8, S * 1.8), new ShadowMaterial({ color: 0x2a1d15, opacity: kind === 'process' ? 0.42 : 0.24 }));
-  ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
-  scene.add(ground);
+  let ground, wood = null;
+  if (table) {
+    // bordet i varmt, lågt solljus genom ett fönster (som på kundens referensfoto)
+    wood = woodTable();
+    scene.add(wood);
+    ground = wood;
+    key.castShadow = false;
+    key.intensity = 0.5;
+    key.position.set(3, 4, 4);
+    scene.environmentIntensity = 0.42;
+    const sun = new SpotLight(0xffe4c4, 2.7, 0, 0.7, 0.45, 0);
+    sun.position.set(-6.5, 8.5, -5);
+    sun.target.position.set(0.4, 0, 0.6);
+    sun.map = goboTexture();
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(sm, sm);
+    sun.shadow.radius = 5;
+    sun.shadow.blurSamples = 16;
+    sun.shadow.bias = -0.0003;
+    sun.shadow.camera.near = 4; sun.shadow.camera.far = 30;
+    scene.add(sun, sun.target);
+  } else {
+    ground = new Mesh(new PlaneGeometry(S * 1.8, S * 1.8), new ShadowMaterial({ color: 0x2a1d15, opacity: kind === 'process' ? 0.42 : 0.24 }));
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+  }
   const camera = new PerspectiveCamera(24, 1, 0.05, 80);
   const pos = platter.mesh.geometry.getAttribute('position'), foot = [];
   for (let i = 0; i < pos.count; i += 7) foot.push([pos.getX(i), pos.getZ(i)]);
@@ -487,7 +628,7 @@ function buildScene(renderer, name, kind) {
     }
     return [rx, rz];
   };
-  return { scene, camera, platter, platters, turn, fitR, fitH, key, ground, under, extent };
+  return { scene, camera, platter, platters, turn, fitR, fitH, key, ground, under, extent, wood };
 }
 
 // Kameran tittar på fatet från en höjdvinkel (el) och ett varv (az), och anpassar avståndet så att fatet fyller rutan.
@@ -695,6 +836,7 @@ function init() {
           frameCamera(st.camera, aspect, st.fitR, st.fitH, el, st.kind === 'hero' ? 0.92 : 0.8, st.fitH * 0.25);
         }
       }
+      if (st.wood) st.wood.userData.u.uFocus.value = st.camera.position.length();
       const y = H - r.bottom;
       renderer.setViewport(r.left, y, r.width, r.height);
       renderer.setScissor(r.left, y, r.width, r.height);
@@ -713,7 +855,7 @@ function init() {
 }
 
 // Produktbild av ett fat (används för att ta fram img/fat-*.webp och Stripe-bilder). Inte en del av sidan.
-export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84, type = 'image/webp', quality = 0.9, background = null, aspect = 1, mode = 'hel', az = 0.4 } = {}) {
+export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84, type = 'image/webp', quality = 0.9, background = null, aspect = 1, mode = 'hel', az = 0.4, table = null } = {}) {
   const canvas = document.createElement('canvas');
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: !background, preserveDrawingBuffer: true });
   renderer.setPixelRatio(2);
@@ -723,7 +865,8 @@ export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84,
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = VSMShadowMap;
   if (background) renderer.setClearColor(new Color(background), 1); else renderer.setClearColor(0x000000, 0);
-  const st = buildScene(renderer, name, 'snapshot');
+  const st = buildScene(renderer, name, 'snapshot', table ?? (mode === 'hel' || mode === 'detalj'));
+  let focus = new Vector3(0, st.fitH * 0.25, 0);
   st.turn.rotation.y = yaw;
   st.scene.updateMatrixWorld(true);
   if (mode === 'hel') {
@@ -749,8 +892,10 @@ export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84,
     st.camera.aspect = aspect;
     st.camera.position.set(p.x + Math.sin(az) * Math.cos(e) * dist, p.y + Math.sin(e) * dist, p.z + Math.cos(az) * Math.cos(e) * dist);
     st.camera.lookAt(p);
+    focus = p;
     st.camera.updateProjectionMatrix();
   }
+  if (st.wood) st.wood.userData.u.uFocus.value = st.camera.position.distanceTo(focus);
   renderer.render(st.scene, st.camera);
   const out = document.createElement('canvas');
   out.width = Math.round(size * aspect); out.height = size;
