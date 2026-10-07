@@ -6,3 +6,5 @@
 wrangler.jsonc
 README.md
 CLAUDE.md
+worker
+.dev.vars

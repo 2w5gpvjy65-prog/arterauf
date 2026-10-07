@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Vika – handgjort keramikfat | Artera UF</title>
-  <meta name="description" content="Stort vågigt fat i vit glasyr med rosa marmorering och små svarta prickar. Handgjort i Mora av Artera UF. 349 kr.">
+  <meta name="description" content="Stort vågigt fat i vit glasyr med marmorering och små svarta prickar. Finns i tre färger. Handgjort i Mora av Artera UF. 349 kr.">
   <meta property="og:title" content="Vika – handgjort keramikfat från Artera UF">
-  <meta property="og:description" content="Stort vågigt fat i vit glasyr med rosa marmorering och små svarta prickar.">
+  <meta property="og:description" content="Stort vågigt fat i vit glasyr med marmorering och små svarta prickar. Finns i tre färger.">
   <meta property="og:type" content="product">
   <meta property="og:locale" content="sv_SE">
   <meta property="og:image" content="https://arterauf.2w5gpvjy65.workers.dev/img/stripe-vika.jpg">
@@ -16,9 +16,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Marcellus&family=Reenie+Beanie&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=8">
+  <link rel="stylesheet" href="/css/style.css?v=9">
   <link rel="modulepreload" href="/js/vendor/three.js">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Vika – handgjort keramikfat","description":"Stort vågigt fat i vit glasyr med rosa marmorering och små svarta prickar.","image":"https://arterauf.2w5gpvjy65.workers.dev/img/stripe-vika.jpg","brand":{"@type":"Brand","name":"Artera UF"},"offers":{"@type":"Offer","price":"349","priceCurrency":"SEK","availability":"https://schema.org/InStock","url":"https://arterauf.2w5gpvjy65.workers.dev/fat/vika"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Vika – handgjort keramikfat","description":"Stort vågigt fat i vit glasyr med marmorering och små svarta prickar.","image":"https://arterauf.2w5gpvjy65.workers.dev/img/stripe-vika.jpg","brand":{"@type":"Brand","name":"Artera UF"},"color":"Rosa marmor, Blå marmor, Grön marmor","offers":{"@type":"Offer","price":"349","priceCurrency":"SEK","availability":"https://schema.org/InStock","url":"https://arterauf.2w5gpvjy65.workers.dev/fat/vika"}}</script>
 </head>
 <body>
 
@@ -34,6 +34,11 @@
         <a href="/#om">Om oss</a>
         <a href="/#kontakt">Kontakt</a>
       </nav>
+      <button class="kv-knapp" type="button" data-kv-oppna aria-label="Kundvagn" aria-controls="kundvagn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 8.5h13l-1.1 11.2a1 1 0 0 1-1 .8H7.6a1 1 0 0 1-1-.8L5.5 8.5z"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/></svg>
+        <span class="kv-knapp__text">Kundvagn</span>
+        <span class="kv-knapp__antal" data-kv-antal hidden>0</span>
+      </button>
       <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav" aria-label="Öppna meny">
         <span></span><span></span>
       </button>
@@ -41,26 +46,25 @@
   </header>
 
   <main class="produkt">
-    <div class="wrap produkt__grid">
+    <!-- data-vara/data-vald: fatet och vald färg (js/butik.js). Bilderna byts när man väljer en annan färg. -->
+    <div class="wrap produkt__grid" data-vara="vika" data-vald="rosa" data-produkt>
       <div class="produkt__media">
-        <!-- Galleri: produktfotot stort, under det fatet i 3D (js/fat3d.js, går att snurra), en närbild och undersidan -->
+        <!-- Galleri: en stor bild och fyra små. Tryck på en liten bild så blir den stor; "3D" visar fatet i 3D (js/fat3d.js), som går att snurra. -->
         <div class="galleri">
-          <figure class="galleri__foto">
-            <img src="/img/foto-vika.webp" alt="Vika, stort vågigt keramikfat i vit glasyr med rosa marmorering och svarta prickar" width="697" height="549">
-          </figure>
-          <div class="stage galleri__3d tile--vika" data-fat="vika" data-kind="viewer">
-            <img class="stage__bg" src="/img/bord-vika.webp" alt="" loading="lazy">
-            <img class="stage__img" src="/img/fat-vika.webp" alt="" width="1000" height="1000" loading="lazy">
-            <p class="tag galleri__hint">Snurra i 3D</p>
+          <div class="galleri__stor">
+            <img class="galleri__bild" data-bild="vy" src="/img/foto-vika.webp" alt="Vika, stort vågigt keramikfat i vit glasyr med marmorering och svarta prickar" width="697" height="549">
+            <div class="stage galleri__3d tile--vika" data-fat="vika" data-kind="viewer" hidden>
+              <img class="stage__bg" src="/img/bord-vika.webp" alt="" loading="lazy">
+              <img class="stage__img" data-bild="fat" src="/img/fat-vika.webp" alt="Vika i 3D" width="1000" height="1000" loading="lazy">
+              <p class="tag galleri__hint">Dra för att snurra</p>
+            </div>
           </div>
-          <figure class="galleri__item">
-            <img src="/img/foto-vika-detalj.webp" alt="Närbild på glasyren på Vika" width="300" height="300" loading="lazy">
-            <figcaption class="tag">Närbild</figcaption>
-          </figure>
-          <figure class="galleri__item tile--vika">
-            <img src="/img/fat-vika-under.webp" alt="Undersidan av Vika med Arteras stämpel" width="900" height="900" loading="lazy">
-            <figcaption class="tag">Undersidan</figcaption>
-          </figure>
+          <ul class="galleri__sma">
+            <li><button type="button" class="tumnagel" data-vy="foto" data-alt="Vika, stort vågigt keramikfat i vit glasyr med marmorering och svarta prickar" aria-pressed="true" aria-label="Visa fotot"><img data-bild="foto" src="/img/foto-vika.webp" alt="" width="697" height="549"></button></li>
+            <li><button type="button" class="tumnagel tumnagel--3d tile--vika" data-vy="3d" aria-pressed="false" aria-label="Snurra fatet i 3D"><img src="/img/bord-vika.webp" alt="" loading="lazy"><img class="tumnagel__fat" data-bild="fat" src="/img/fat-vika.webp" alt="" width="1000" height="1000" loading="lazy"><span class="tumnagel__3d" aria-hidden="true">3D</span></button></li>
+            <li><button type="button" class="tumnagel" data-vy="detalj" data-alt="Närbild på glasyren på Vika" aria-pressed="false" aria-label="Visa närbild på glasyren"><img data-bild="detalj" src="/img/foto-vika-detalj.webp" alt="" width="300" height="300" loading="lazy"></button></li>
+            <li><button type="button" class="tumnagel tile--vika" data-vy="under" data-alt="Undersidan av Vika med Arteras stämpel" aria-pressed="false" aria-label="Visa undersidan med stämpeln"><img data-bild="under" src="/img/fat-vika-under.webp" alt="" width="900" height="900" loading="lazy"></button></li>
+          </ul>
         </div>
       </div>
 
@@ -68,19 +72,36 @@
         <p class="crumbs"><a href="/#faten">Alla fat</a></p>
         <h1>Vika</h1>
         <p class="produkt__price">349 kr</p>
-        <p class="lead">Stort vågigt fat i vit glasyr med rosa marmorering och små svarta prickar.</p>
-        <!-- Köp: Stripe Payment Link. Under bygget en testlänk i Elevora sandbox, vid lansering kundens riktiga länk. -->
-        <a class="btn produkt__buy" href="https://buy.stripe.com/test_bJebJ0bBs8bQg83gkxcbC08" rel="noopener">Köp Vika</a>
+        <p class="lead">Stort vågigt fat i vit glasyr med marmorering och små svarta prickar.</p>
+
+        <div class="fargval">
+          <p class="fargval__namn">Färg: <span data-fargnamn>Rosa marmor</span></p>
+          <div class="prover" role="group" aria-label="Färg på Vika">
+                <button type="button" class="prov" data-farg="rosa" data-glasyr="Blank, vit med rosa marmorering" aria-pressed="true" aria-label="Rosa marmor"><img src="/img/prov-vika-rosa.webp" alt="" width="96" height="96"></button>
+                <button type="button" class="prov" data-farg="bla" data-glasyr="Blank, vit med blå marmorering" aria-pressed="false" aria-label="Blå marmor"><img src="/img/prov-vika-bla.webp" alt="" width="96" height="96"></button>
+                <button type="button" class="prov" data-farg="salvia" data-glasyr="Blank, vit med grön marmorering" aria-pressed="false" aria-label="Grön marmor"><img src="/img/prov-vika-salvia.webp" alt="" width="96" height="96"></button>
+              </div>
+        </div>
+
+        <!-- Köp: läggs i kundvagnen (js/butik.js). Kassan skapas hos Stripe av worker/index.js. -->
+        <div class="kop">
+          <div class="antal" data-antal-val>
+            <button type="button" data-steg="-1" aria-label="Ett färre">−</button>
+            <input type="number" value="1" min="1" max="10" inputmode="numeric" aria-label="Antal">
+            <button type="button" data-steg="1" aria-label="Ett till">+</button>
+          </div>
+          <button type="button" class="btn produkt__buy" data-lagg-i>Lägg i kundvagnen</button>
+        </div>
         <p class="produkt__ship">Frakt 39 kr. Vi skickar inom 2 vardagar. Du betalar med kort, Klarna eller Swish.</p>
 
         <div class="produkt__text">
           <p>Vika är vårt största fat. Kanterna viker sig upp i mjuka vågor, som ett tyg som lagts ut över bordet.</p>
-          <p>Den rosa marmoreringen blir aldrig likadan två gånger, så ditt fat får sitt eget mönster. De små svarta prickarna kommer från järn i leran.</p>
+          <p>Marmoreringen blir aldrig likadan två gånger, så ditt fat får sitt eget mönster. De små svarta prickarna kommer från järn i leran.</p>
         </div>
 
         <dl class="produkt__facts">
           <div><dt>Storlek</dt><dd>cirka 36 × 24 cm</dd></div>
-          <div><dt>Glasyr</dt><dd>Blank, vit med rosa marmorering</dd></div>
+          <div><dt>Glasyr</dt><dd data-glasyrtext>Blank, vit med rosa marmorering</dd></div>
           <div><dt>Passar för</dt><dd>Servering, frukt eller som fat mitt på bordet</dd></div>
           <div><dt>Gjort</dt><dd>För hand i Mora, med vår stämpel under</dd></div>
         </dl>
@@ -110,21 +131,21 @@
             <a class="fler__item" href="/fat/gesunda">
               <span class="fler__img"><img src="/img/foto-gesunda.webp" alt="" width="697" height="549" loading="lazy"></span>
               <span class="fler__name">Gesunda</span>
-              <span class="fler__price">329 kr</span>
+              <span class="fler__price">329 kr · tre färger</span>
             </a>
           </li>
           <li>
             <a class="fler__item" href="/fat/siljan">
               <span class="fler__img"><img src="/img/foto-siljan.webp" alt="" width="697" height="549" loading="lazy"></span>
               <span class="fler__name">Siljan</span>
-              <span class="fler__price">249 kr</span>
+              <span class="fler__price">249 kr · tre färger</span>
             </a>
           </li>
           <li>
             <a class="fler__item" href="/fat/hemus">
               <span class="fler__img"><img src="/img/foto-hemus.webp" alt="" width="697" height="549" loading="lazy"></span>
               <span class="fler__name">Hemus</span>
-              <span class="fler__price">179 kr</span>
+              <span class="fler__price">179 kr · tre färger</span>
             </a>
           </li>
         </ul>
@@ -144,7 +165,8 @@
     </div>
   </footer>
 
-  <script src="/js/main.js?v=8"></script>
-  <script type="module" src="/js/fat3d.js?v=8"></script>
+  <script src="/js/main.js?v=9"></script>
+  <script type="module" src="/js/butik.js?v=9"></script>
+  <script type="module" src="/js/fat3d.js?v=9"></script>
 </body>
 </html>

@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Marcellus&family=Reenie+Beanie&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=8">
+  <link rel="stylesheet" href="css/style.css?v=9">
   <link rel="modulepreload" href="js/vendor/three.js">
 </head>
 <body>
@@ -34,6 +34,11 @@
         <a href="#om">Om oss</a>
         <a href="#kontakt">Kontakt</a>
       </nav>
+      <button class="kv-knapp" type="button" data-kv-oppna aria-label="Kundvagn" aria-controls="kundvagn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 8.5h13l-1.1 11.2a1 1 0 0 1-1 .8H7.6a1 1 0 0 1-1-.8L5.5 8.5z"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/></svg>
+        <span class="kv-knapp__text">Kundvagn</span>
+        <span class="kv-knapp__antal" data-kv-antal hidden>0</span>
+      </button>
       <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav" aria-label="Öppna meny">
         <span></span><span></span>
       </button>
@@ -63,59 +68,107 @@
       </div>
     </section>
 
-    <!-- PRODUKTER: varje fat leder till sin produktsida i fat/, där Köp-knappen länkar till Stripe Payment Links.
-         Under bygget testlänkar (buy.stripe.com/test_…) i Elevora sandbox, vid lansering kundens riktiga länkar. Se "Betalning" i CLAUDE.md. -->
+    <!-- PRODUKTER: varje fat finns i tre färger och leder till sin produktsida i fat/. "Lägg i kundvagnen" sköts av js/butik.js,
+         priserna finns i js/katalog.js och kassan skapas hos Stripe av worker/index.js. Se "Betalning" i CLAUDE.md. -->
     <section class="faten" id="faten">
-      <div class="wrap">
+      <div class="wrap faten__grid">
         <div class="faten__head">
           <h2>Faten</h2>
-          <p>Fyra former och fyra glasyrer. Tryck på ett fat för att se det från alla håll. Varje fat är gjort för hand, så ditt blir lite olikt det du ser här.</p>
+          <p>Fyra former, var och en i tre glasyrer. Tryck på ett fat för att se det från alla håll. Varje fat är gjort för hand, så ditt blir lite olikt det du ser här.</p>
+          <ul class="faten__fakta">
+            <li><b>Frakt 39 kr</b>PostNord, vi skickar inom 2 vardagar</li>
+            <li><b>Kort, Klarna eller Swish</b>i Stripes säkra kassa</li>
+            <li><b>14 dagars ångerrätt</b>allt står i <a href="kopvillkor.html">köpvillkoren</a></li>
+          </ul>
+          <p class="note faten__note" aria-hidden="true">inga två blir exakt lika</p>
         </div>
 
         <ul class="butik">
-          <li class="vara" id="vika">
-            <a class="vara__bild" href="fat/vika" aria-label="Vika, 349 kr">
-              <img src="img/foto-vika.webp" alt="Vika, stort vågigt keramikfat i vit glasyr med rosa marmorering och svarta prickar" width="697" height="549" loading="lazy">
+          <li class="vara" data-vara="vika" data-vald="rosa">
+            <a class="vara__bild" href="fat/vika" data-farglank aria-label="Vika, 349 kr">
+              <img data-bild="foto" src="img/foto-vika.webp" alt="Vika, stort vågigt keramikfat i vit glasyr med marmorering och svarta prickar" width="697" height="549" loading="lazy">
             </a>
             <div class="vara__info">
-              <h3><a href="fat/vika">Vika</a></h3>
+              <h3><a href="fat/vika" data-farglank>Vika</a></h3>
               <p class="vara__pris">349 kr</p>
-              <p class="vara__text">Stort vågigt fat, vit med rosa marmor</p>
+              <p class="vara__text">Stort vågigt fat</p>
+            </div>
+            <div class="vara__val">
+              <div class="vara__farger">
+                <div class="prover prover--sma" role="group" aria-label="Färg på Vika">
+                <button type="button" class="prov" data-farg="rosa" data-glasyr="Blank, vit med rosa marmorering" aria-pressed="true" aria-label="Rosa marmor"><img src="img/prov-vika-rosa.webp" alt="" width="96" height="96"></button>
+                <button type="button" class="prov" data-farg="bla" data-glasyr="Blank, vit med blå marmorering" aria-pressed="false" aria-label="Blå marmor"><img src="img/prov-vika-bla.webp" alt="" width="96" height="96"></button>
+                <button type="button" class="prov" data-farg="salvia" data-glasyr="Blank, vit med grön marmorering" aria-pressed="false" aria-label="Grön marmor"><img src="img/prov-vika-salvia.webp" alt="" width="96" height="96"></button>
+              </div>
+                <span class="vara__fargnamn" data-fargnamn>Rosa marmor</span>
+              </div>
+              <button type="button" class="vara__lagg" data-lagg-i>Lägg i kundvagnen</button>
             </div>
           </li>
-          <li class="vara" id="gesunda">
-            <a class="vara__bild" href="fat/gesunda" aria-label="Gesunda, 329 kr">
-              <img src="img/foto-gesunda.webp" alt="Gesunda, långt vågigt serveringsfat i sandfärgad glasyr med prickar" width="697" height="549" loading="lazy">
+          <li class="vara" data-vara="gesunda" data-vald="sand">
+            <a class="vara__bild" href="fat/gesunda" data-farglank aria-label="Gesunda, 329 kr">
+              <img data-bild="foto" src="img/foto-gesunda.webp" alt="Gesunda, långt vågigt serveringsfat i blank glasyr med prickar" width="697" height="549" loading="lazy">
             </a>
             <div class="vara__info">
-              <h3><a href="fat/gesunda">Gesunda</a></h3>
+              <h3><a href="fat/gesunda" data-farglank>Gesunda</a></h3>
               <p class="vara__pris">329 kr</p>
-              <p class="vara__text">Långt serveringsfat, sand med prickar</p>
+              <p class="vara__text">Långt serveringsfat</p>
+            </div>
+            <div class="vara__val">
+              <div class="vara__farger">
+                <div class="prover prover--sma" role="group" aria-label="Färg på Gesunda">
+                <button type="button" class="prov" data-farg="sand" data-glasyr="Blank, sand med prickar" aria-pressed="true" aria-label="Sand"><img src="img/prov-gesunda-sand.webp" alt="" width="96" height="96"></button>
+                <button type="button" class="prov" data-farg="kritvit" data-glasyr="Blank, kritvit med prickar" aria-pressed="false" aria-label="Kritvit"><img src="img/prov-gesunda-kritvit.webp" alt="" width="96" height="96"></button>
+                <button type="button" class="prov" data-farg="rose" data-glasyr="Blank, rosé med prickar" aria-pressed="false" aria-label="Rosé"><img src="img/prov-gesunda-rose.webp" alt="" width="96" height="96"></button>
+              </div>
+                <span class="vara__fargnamn" data-fargnamn>Sand</span>
+              </div>
+              <button type="button" class="vara__lagg" data-lagg-i>Lägg i kundvagnen</button>
             </div>
           </li>
-          <li class="vara" id="siljan">
-            <a class="vara__bild" href="fat/siljan" aria-label="Siljan, 249 kr">
-              <img src="img/foto-siljan.webp" alt="Siljan, runt keramikfat med vågiga kanter i dimblå glasyr" width="697" height="549" loading="lazy">
+          <li class="vara" data-vara="siljan" data-vald="dimbla">
+            <a class="vara__bild" href="fat/siljan" data-farglank aria-label="Siljan, 249 kr">
+              <img data-bild="foto" src="img/foto-siljan.webp" alt="Siljan, runt keramikfat med vågiga kanter i blank glasyr" width="697" height="549" loading="lazy">
             </a>
             <div class="vara__info">
-              <h3><a href="fat/siljan">Siljan</a></h3>
+              <h3><a href="fat/siljan" data-farglank>Siljan</a></h3>
               <p class="vara__pris">249 kr</p>
-              <p class="vara__text">Runt vågigt fat, dimblå</p>
+              <p class="vara__text">Runt vågigt fat</p>
+            </div>
+            <div class="vara__val">
+              <div class="vara__farger">
+                <div class="prover prover--sma" role="group" aria-label="Färg på Siljan">
+                <button type="button" class="prov" data-farg="dimbla" data-glasyr="Blank, dimblå med prickar" aria-pressed="true" aria-label="Dimblå"><img src="img/prov-siljan-dimbla.webp" alt="" width="96" height="96"></button>
+                <button type="button" class="prov" data-farg="salvia" data-glasyr="Blank, salviagrön med prickar" aria-pressed="false" aria-label="Salviagrön"><img src="img/prov-siljan-salvia.webp" alt="" width="96" height="96"></button>
+                <button type="button" class="prov" data-farg="rose" data-glasyr="Blank, rosé med prickar" aria-pressed="false" aria-label="Rosé"><img src="img/prov-siljan-rose.webp" alt="" width="96" height="96"></button>
+              </div>
+                <span class="vara__fargnamn" data-fargnamn>Dimblå</span>
+              </div>
+              <button type="button" class="vara__lagg" data-lagg-i>Lägg i kundvagnen</button>
             </div>
           </li>
-          <li class="vara" id="hemus">
-            <a class="vara__bild" href="fat/hemus" aria-label="Hemus, 179 kr">
-              <img src="img/foto-hemus.webp" alt="Hemus, litet vågigt keramikfat i salviagrön glasyr" width="697" height="549" loading="lazy">
+          <li class="vara" data-vara="hemus" data-vald="salvia">
+            <a class="vara__bild" href="fat/hemus" data-farglank aria-label="Hemus, 179 kr">
+              <img data-bild="foto" src="img/foto-hemus.webp" alt="Hemus, litet vågigt keramikfat i blank glasyr" width="697" height="549" loading="lazy">
             </a>
             <div class="vara__info">
-              <h3><a href="fat/hemus">Hemus</a></h3>
+              <h3><a href="fat/hemus" data-farglank>Hemus</a></h3>
               <p class="vara__pris">179 kr</p>
-              <p class="vara__text">Litet vågigt fat, salviagrön</p>
+              <p class="vara__text">Litet vågigt fat</p>
+            </div>
+            <div class="vara__val">
+              <div class="vara__farger">
+                <div class="prover prover--sma" role="group" aria-label="Färg på Hemus">
+                <button type="button" class="prov" data-farg="salvia" data-glasyr="Blank, salviagrön med prickar" aria-pressed="true" aria-label="Salviagrön"><img src="img/prov-hemus-salvia.webp" alt="" width="96" height="96"></button>
+                <button type="button" class="prov" data-farg="dimbla" data-glasyr="Blank, dimblå med prickar" aria-pressed="false" aria-label="Dimblå"><img src="img/prov-hemus-dimbla.webp" alt="" width="96" height="96"></button>
+                <button type="button" class="prov" data-farg="kritvit" data-glasyr="Blank, kritvit med prickar" aria-pressed="false" aria-label="Kritvit"><img src="img/prov-hemus-kritvit.webp" alt="" width="96" height="96"></button>
+              </div>
+                <span class="vara__fargnamn" data-fargnamn>Salviagrön</span>
+              </div>
+              <button type="button" class="vara__lagg" data-lagg-i>Lägg i kundvagnen</button>
             </div>
           </li>
         </ul>
-
-        <p class="faten__ship">Frakten kostar 39 kr och vi skickar inom 2 vardagar. Du betalar med kort, Klarna eller Swish.</p>
       </div>
     </section>
 
@@ -135,15 +188,17 @@
     </section>
 
     <section class="process" id="sa-gor-vi">
-      <div class="wrap">
-        <div class="process__intro">
-          <h2>Så gör vi ett fat</h2>
-          <p>Från lerklump till färdigt fat tar det ett par veckor. Scrolla lugnt för att följa ett av dem genom alla steg.</p>
+      <div class="wrap process__intro">
+        <h2>Så gör vi ett fat</h2>
+        <p>Från lerklump till färdigt fat tar det ett par veckor. Scrolla för att följa ett av dem genom alla steg.</p>
+      </div>
+      <div class="process__grid">
+        <!-- Fatet ritas av js/fat3d.js ovanpå fotot av verkstadsbordet och går igenom stegen i sin egen lugna takt -->
+        <div class="stage process__stage" data-fat="siljan" data-kind="process">
+          <img class="stage__bg" src="img/verkstad.webp" alt="" width="1754" height="897" loading="lazy">
+          <img class="stage__img" src="img/fat-siljan.webp" alt="" width="1000" height="1000" loading="lazy">
         </div>
-        <div class="process__grid">
-          <div class="stage process__stage" data-fat="siljan" data-kind="process">
-            <img class="stage__img" src="img/fat-siljan.webp" alt="" width="1000" height="1000" loading="lazy">
-          </div>
+        <div class="wrap process__wrap">
           <ol class="process__steps">
             <li class="step">
               <div class="step__body">
@@ -211,7 +266,7 @@
           </details>
           <details>
             <summary>Hur betalar jag?</summary>
-            <p>Med kort, Klarna eller Swish. Du trycker på "Köp" och betalar i en säker kassa hos Stripe. Vi ser aldrig dina kortuppgifter, och kvittot kommer till din mejl.</p>
+            <p>Med kort, Klarna eller Swish. Du lägger faten i kundvagnen och betalar i en säker kassa hos Stripe. Vi ser aldrig dina kortuppgifter, och kvittot kommer till din mejl.</p>
           </details>
           <details>
             <summary>Ser mitt fat ut exakt som på bilden?</summary>
@@ -263,7 +318,8 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=8"></script>
-  <script type="module" src="js/fat3d.js?v=8"></script>
+  <script src="js/main.js?v=9"></script>
+  <script type="module" src="js/butik.js?v=9"></script>
+  <script type="module" src="js/fat3d.js?v=9"></script>
 </body>
 </html>

@@ -13,4 +13,8 @@
   }
   var year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();
+  // Köpet är klart (kop-klart.html): töm kundvagnen
+  if (document.body.hasAttribute('data-rensa-kundvagn')) {
+    try { localStorage.removeItem('artera-kundvagn'); } catch (e) { /* privat läge */ }
+  }
 })();

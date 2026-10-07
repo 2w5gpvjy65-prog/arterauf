@@ -58,6 +58,22 @@ export const FAT = {
   },
 };
 
+// Färgalternativen (samma nycklar som i js/katalog.js). Varje färg ändrar glasyren ovan; den första är den som syns på produktfotot.
+const KRITVIT = { base: '#ebe5dc', deep: '#d6cdc1', edgeCol: '#f5f1ea', edgeAmt: 0.3, mottle: 0.05 };
+const ROSE = { base: '#d9c0bf', deep: '#bea2a1', edgeCol: '#ecdddc', edgeAmt: 0.35, mottle: 0.08 };
+const DIMBLA = { base: '#aab3b1', deep: '#8d9895', edgeCol: '#e6e9e6', edgeAmt: 0.35, mottle: 0.09 };
+const SALVIA = { base: '#a3a682', deep: '#80855f', edgeCol: '#e2e4d8', edgeAmt: 0.55, mottle: 0.08 };
+export const FARGER = {
+  vika: { rosa: {}, bla: { marble: '#aebdd8', marbleDeep: '#7f95bd' }, salvia: { marble: '#bac6a5', marbleDeep: '#8fa37b' } },
+  gesunda: { sand: {}, kritvit: KRITVIT, rose: ROSE },
+  siljan: { dimbla: {}, salvia: SALVIA, rose: ROSE },
+  hemus: { salvia: {}, dimbla: DIMBLA, kritvit: KRITVIT },
+};
+const withFarg = (id, farg) => {
+  const o = FARGER[id] && FARGER[id][farg];
+  return o ? { ...FAT[id], glaze: { ...FAT[id].glaze, ...o } } : FAT[id];
+};
+
 // ---------- Formen ----------
 function shape(spec) {
   const [w, d] = spec.size, n = spec.n, e = 2 / n;
@@ -400,11 +416,18 @@ export function makePlatter(spec) {
     setLift(v) { mesh.morphTargetInfluences[0] = 1 - v; } };
 }
 
+// Byter glasyr på ett fat som redan ritas (färgvalet på produktsidan)
+function setGlaze(p, id, farg) {
+  const g = withFarg(id, farg).glaze, u = p.u;
+  u.uBase.value.set(g.base); u.uDeep.value.set(g.deep); u.uMarble.value.set(g.marble); u.uMarbleDeep.value.set(g.marbleDeep);
+  u.uEdgeCol.value.set(g.edgeCol); u.uEdgeAmt.value = g.edgeAmt; u.uMarbleAmt.value = g.marbleAmt; u.uMottle.value = g.mottle;
+}
+
 // Kaveln från loggan (första steget i "Så gör vi")
 function rollingPin() {
   const pr = [[0, -1.85], [0.05, -1.845], [0.078, -1.82], [0.085, -1.78], [0.085, -1.45], [0.095, -1.41], [0.15, -1.38], [0.192, -1.35], [0.2, -1.31]];
   const prof = [...pr, ...pr.slice().reverse().map(([x, y]) => [x, -y])].map(([x, y]) => new Vector2(x, y));
-  const mat = new MeshStandardMaterial({ color: 0xffffff, roughness: 0.62 });
+  const mat = new MeshStandardMaterial({ color: 0xffffff, roughness: 0.62, transparent: true });
   mat.onBeforeCompile = (sh) => {
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vObj;')
       .replace('#include <project_vertex>', 'vObj = position;\n#include <project_vertex>');
@@ -420,7 +443,7 @@ diffuseColor.rgb = mix(vec3(0.58, 0.37, 0.2), vec3(0.4, 0.23, 0.11), ring * 0.55
   mesh.castShadow = true;
   const roll = new Group(), g = new Group();
   roll.add(mesh); g.add(roll);
-  g.roll = roll;
+  g.roll = roll; g.mesh = mesh;
   return g;
 }
 
@@ -487,8 +510,8 @@ const COMPS = {
   'vika+hemus': [{ id: 'vika', x: -0.6, z: -0.45, yaw: 0.25 }, { id: 'hemus', x: 1.5, z: 0.95, yaw: -0.9 }],
 };
 
-// sun = faten står på ett av bordsfotona: varm sol med lövmönster, genomskinlig bakgrund och skugga ner på fotot
-function buildScene(renderer, name, kind, sun = kind !== 'process') {
+// sun = faten står på ett foto av ett bord: varm sol med lövmönster, genomskinlig bakgrund och skugga ner på fotot
+function buildScene(renderer, name, kind, sun = true, farg = '') {
   const scene = new Scene();
   scene.environment = environment(renderer);
   scene.environmentIntensity = 0.55;
@@ -500,7 +523,7 @@ function buildScene(renderer, name, kind, sun = kind !== 'process') {
   list.forEach((c) => { const r = FAT[c.id].size[0]; cw += r; cx += c.x * r; cz += c.z * r; });
   cx /= cw; cz /= cw;
   const platters = list.map((c) => {
-    const p = makePlatter(FAT[c.id]);
+    const p = makePlatter(withFarg(c.id, farg));
     p.root.position.set(c.x - cx, 0, c.z - cz);
     p.root.rotation.y = c.yaw;
     turn.add(p.root);
@@ -526,7 +549,7 @@ function buildScene(renderer, name, kind, sun = kind !== 'process') {
   const under = new DirectionalLight(0xfff3e8, 0);
   under.position.set(0.6, -4, 2.5);
   scene.add(under);
-  let ground;
+  let ground, sol = null;
   if (sun) {
     // varmt, lågt solljus genom ett fönster uppe till vänster, som på bordsfotona
     ground = new Mesh(new PlaneGeometry(S * 1.8, S * 1.8), new ShadowMaterial({ color: 0x1e130b, opacity: 0.58 }));
@@ -538,7 +561,7 @@ function buildScene(renderer, name, kind, sun = kind !== 'process') {
     key.color.set(0xffe6cc);
     key.position.set(3, 4, 4);
     scene.environmentIntensity = 0.36;
-    const sol = new SpotLight(0xffd7a8, 3.1, 0, 0.7, 0.45, 0);
+    sol = new SpotLight(0xffd7a8, 3.1, 0, 0.7, 0.45, 0);
     sol.position.set(-6.5, 8.5, -5);
     sol.target.position.set(0.4, 0, 0.6);
     sol.map = goboTexture();
@@ -567,7 +590,19 @@ function buildScene(renderer, name, kind, sun = kind !== 'process') {
     }
     return [rx, rz];
   };
-  return { scene, camera, platter, platters, turn, fitR, fitH, key, ground, under, extent };
+  return { scene, camera, platter, platters, turn, fitR, fitH, key, ground, under, sol, extent };
+}
+
+// Var bakgrundsfotot hamnar i rutan (object-fit: cover, centrerat). Används för att låsa fatet vid en plats på fotot.
+function photoRect(st) {
+  const bg = st.bg;
+  if (!bg) return null;
+  const iw = bg.naturalWidth || +bg.getAttribute('width'), ih = bg.naturalHeight || +bg.getAttribute('height');
+  if (!iw || !ih) return null;
+  const b = bg.getBoundingClientRect();
+  if (!b.width || !b.height) return null;
+  const s = Math.max(b.width / iw, b.height / ih), dw = iw * s, dh = ih * s;
+  return { dw, dh, x0: b.left + (b.width - dw) / 2, y0: b.top + (b.height - dh) / 2 };
 }
 
 // Kameran tittar på fatet från en höjdvinkel (el) och ett varv (az), och anpassar avståndet så att fatet fyller rutan.
@@ -580,6 +615,16 @@ function frameCamera(cam, aspect, R, H, el, fill, yLook = 0, az = 0, Rz = R) {
   cam.position.set(Math.sin(az) * Math.cos(el) * dist, yLook + Math.sin(el) * dist, Math.cos(az) * Math.cos(el) * dist);
   cam.lookAt(0, yLook, 0);
   cam.updateProjectionMatrix();
+}
+
+// Som frameCamera, men storleken räknas mot hela bakgrundsfotot och fatet står på punkten (ax, ay) på fotot
+// (0–1 från vänster och uppifrån). Då ligger fatet på samma ställe på bordet och är lika stort i förhållande
+// till fotot, hur rutan än är formad (mobil, dator, helskärm).
+function framePhoto(st, r, ax, ay, R, H, el, fill, yLook = 0) {
+  const v = photoRect(st);
+  if (!v) { st.camera.clearViewOffset(); frameCamera(st.camera, r.width / r.height, R, H, el, fill, yLook); return; }
+  frameCamera(st.camera, v.dw / v.dh, R, H, el, fill, yLook);
+  st.camera.setViewOffset(v.dw, v.dh, r.left - (v.x0 + ax * v.dw) + v.dw / 2, r.top - (v.y0 + ay * v.dh) + v.dh / 2, r.width, r.height);
 }
 
 // ---------- Sidan ----------
@@ -633,9 +678,10 @@ function init() {
 
   const stages = els.map((el, i) => {
     const kind = el.dataset.kind || 'product';
-    const st = Object.assign(buildScene(renderer, el.dataset.fat, kind), {
-      el, kind, base: 0.35 + i * 1.9, dir: i % 2 ? -1 : 1, drag: 0, vel: 0, live: false, p: 0,
-      el0: kind === 'viewer' ? 0.62 : 0.66, camEl: 0.62, camAz: 0, viewEl: 0.62, lastTouch: -1e9, auto: 0,
+    const farg = el.dataset.farg || '';
+    const st = Object.assign(buildScene(renderer, el.dataset.fat, kind, true, farg), {
+      el, kind, base: 0.35 + i * 1.9, dir: i % 2 ? -1 : 1, drag: 0, vel: 0, live: false, p: 0, pv: 0,
+      lastTouch: -1e9, auto: 0, farg, bg: el.querySelector('.stage__bg'),
     });
     if (kind === 'process') setupProcess(st);
     else setupDrag(st);
@@ -667,37 +713,46 @@ function init() {
     st.scene.add(st.kiln);
     st.keyBase = new Color(0xfff5ec);
     st.keyWarm = new Color(0xffa766);
+    // verkstadsbordet ligger mest i skugga: svagare sol än på produktbilderna
+    st.solBase = 1.8;
+    st.ground.material.opacity = 0.5;
   }
 
-  // "Så gör vi": P går från 0 till 5, ett heltal per steg. Varje förändring sker i början av steget,
-  // sedan står fatet still en stund så att man hinner se resultatet.
+  // "Så gör vi": P går från 0 till 5, ett heltal per steg. När ett steg kommer fram spelas dess förändring upp
+  // i en lugn, fast takt (cirka 3 sekunder per steg) hur snabbt man än scrollar. Sedan står fatet still.
   function updateProcess(st, dt) {
-    const line = W < 900 ? st.el.getBoundingClientRect().bottom + 40 : H * 0.55;
-    let target = 0, active = -1;
-    st.steps.forEach((s, i) => {
-      const r = s.getBoundingClientRect(), k = clamp((line - r.top) / r.height);
-      target += k;
-      if (k > 0) active = i;
-    });
-    st.steps.forEach((s, i) => s.classList.toggle('is-active', i === active || (active < 0 && i === 0)));
-    st.p += (target - st.p) * (1 - Math.exp(-dt * (still ? 12 : 3.2)));
+    const line = W < 900 ? st.el.getBoundingClientRect().bottom + 40 : H * 0.62;
+    let active = -1;
+    st.steps.forEach((s, i) => { if (s.getBoundingClientRect().top < line) active = i; });
+    st.steps.forEach((s, i) => s.classList.toggle('is-active', i === Math.max(0, active)));
+    const target = active + 1;
+    if (still) { st.p = target; st.pv = 0; }
+    else {
+      // ligger fatet mer än ett steg efter går det lite fortare, men aldrig ryckigt
+      const d = target - st.p, speed = 0.34 * (1 + 0.4 * Math.max(0, Math.abs(d) - 1));
+      const want = Math.sign(d) * Math.min(speed, Math.abs(d) * 1.2);
+      st.pv += (want - st.pv) * (1 - Math.exp(-dt * 3));
+      st.p += st.pv * dt;
+      if (Math.abs(target - st.p) < 0.002 && Math.abs(st.pv) < 0.01) { st.p = target; st.pv = 0; }
+    }
     const P = st.p, T = st.platter, u = T.u;
     // 1 kavla
-    // kaveln rullar bakifrån och fram, lyfts sedan bort bakåt innan steget står still
+    // kaveln rullar bakifrån och fram, lyfts sedan och tonar bort innan steget står still
     const roll = easeIO(seg(P, 0.08, 0.52)), pinOut = easeIO(seg(P, 0.52, 0.76));
     u.uPinZ.value = lerp(-1.75, 1.75, roll);
     u.uLump.value = 1;
     u.uMarks.value = lerp(1, 0.3, ease(seg(P, 1.1, 1.5)));
     T.root.scale.set(lerp(0.95, 1, roll), lerp(1.3, 1, roll), lerp(0.95, 1, roll));
     const pinR = 0.2, pz = lerp(-1.75, 1.75, roll);
-    st.pin.roll.position.set(0, 0.06 * T.root.scale.y + pinR + pinOut * 3.2, lerp(pz, -2.6, pinOut));
+    st.pin.roll.position.set(0, 0.06 * T.root.scale.y + pinR + pinOut * 0.8, pz + pinOut * 0.6);
     st.pin.roll.rotation.x = pz / pinR;
+    st.pin.mesh.material.opacity = 1 - pinOut;
+    st.pin.mesh.castShadow = pinOut < 0.5;
     st.pin.visible = P < 0.78;
-    // 2 forma och stämpla: plattan läggs över en form och får sina vågor, sedan tittar kameran in under fatet
+    // 2 forma och stämpla: plattan läggs över en form och får sina vågor (stämpeln trycks in under fatet)
     const lift = easeIO(seg(P, 1.1, 1.55));
     T.setLift(lift);
     u.uStampOn.value = ease(seg(P, 1.66, 1.76));
-    const under = easeIO(seg(P, 1.55, 1.86)) - easeIO(seg(P, 2.0, 2.32));
     // 3 torka och skröjbränna
     u.uDry.value = ease(seg(P, 2.1, 2.45));
     const kiln1 = bell(P, 2.48, 2.66, 2.92);
@@ -709,17 +764,13 @@ function init() {
     u.uFired.value = ease(seg(P, 4.3, 4.7));
     // ugnsljus: rummet mörknar och lyses upp varmt från sidan, fatet självt lyser inte
     const k = Math.max(kiln1, kiln2);
-    st.key.intensity = lerp(1.7, 0.35, k);
+    st.key.intensity = lerp(0.5, 0.2, k);
     st.key.color.copy(st.keyBase).lerp(st.keyWarm, k);
+    st.sol.intensity = lerp(st.solBase, 0.5, k);
     st.kiln.intensity = k * 6;
-    st.under.intensity = under * 1.8;
-    st.scene.environmentIntensity = lerp(0.6, 0.15, k);
+    st.scene.environmentIntensity = lerp(0.36, 0.1, k);
     st.el.style.setProperty('--heat', k.toFixed(3));
     T.setYaw(0.3);
-    const az = still ? 0.15 : lerp(-0.5, 0.85, ease(seg(P, 0, 5)));
-    const el = lerp(lerp(0.86, 0.62, ease(seg(P, 0.2, 1.4))), still ? -0.55 : -0.8, under);
-    const R = lerp(T.flatRadius * 1.08, T.radius, lift);
-    return { R, el, az };
   }
 
   let last = performance.now(), drewLast = false, lastSY = -1, lastScroll = 0, tick = 0;
@@ -747,9 +798,13 @@ function init() {
     for (const [st, r] of vis) {
       const T = st.platter, aspect = r.width / r.height;
       if (st.kind === 'process') {
-        const { R, el, az } = updateProcess(st, dt);
-        frameCamera(st.camera, aspect, R, T.height, el, W < 900 ? 0.9 : 0.78, 0.05, az);
+        // kameran står still, fatet ligger mitt på verkstadsbordet på fotot
+        updateProcess(st, dt);
+        framePhoto(st, r, W < 900 ? 0.5 : 0.565, 0.58, T.flatRadius, T.height, 0.88, 0.5, 0.05);
       } else {
+        // färgvalet på produktsidan
+        const farg = st.el.dataset.farg || '';
+        if (farg !== st.farg && FAT[st.el.dataset.fat]) { st.farg = farg; setGlaze(T, st.el.dataset.fat, farg); }
         const turn = (a) => { st.turn.rotation.y = a; };
         if (Math.abs(st.vel) > 0.0001 && !st.el.classList.contains('is-dragging')) { st.drag += st.vel; st.vel *= Math.pow(0.04, dt); }
         const idle = now - st.lastTouch > 4000;
@@ -771,8 +826,14 @@ function init() {
         } else {
           const spin = still ? sy * 0.0009 : t * 0.05 + sy * 0.0018;
           turn(st.base + spin * st.dir + st.drag);
-          const el = st.kind === 'hero' ? lerp(0.92, 1.05, clamp(sy / Math.max(1, H))) : 0.98;
-          frameCamera(st.camera, aspect, st.fitR, st.fitH, el, st.kind === 'hero' ? 0.74 : 0.62, st.fitH * 0.25);
+          if (st.kind === 'hero') {
+            // faten ligger på den fria delen av bordet, nedanför kvistarna i vasen, och är lika stora i förhållande
+            // till fotot oavsett skärm
+            const el = lerp(0.92, 1.05, clamp(sy / Math.max(1, H)));
+            framePhoto(st, r, 0.53, 0.665, st.fitR, st.fitH, el, 0.5, st.fitH * 0.25);
+          } else {
+            frameCamera(st.camera, aspect, st.fitR, st.fitH, 0.98, 0.62, st.fitH * 0.25);
+          }
         }
       }
       const y = H - r.bottom;
@@ -793,7 +854,7 @@ function init() {
 }
 
 // Produktbild av ett fat (används för att ta fram img/fat-*.webp och Stripe-bilder). Inte en del av sidan.
-export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84, type = 'image/webp', quality = 0.9, background = null, aspect = 1, mode = 'hel', az = 0.4, sun = null } = {}) {
+export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84, type = 'image/webp', quality = 0.9, background = null, aspect = 1, mode = 'hel', az = 0.4, sun = null, farg = '' } = {}) {
   const canvas = document.createElement('canvas');
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: !background, preserveDrawingBuffer: true });
   renderer.setPixelRatio(2);
@@ -803,7 +864,7 @@ export function snapshot(name, size = 1000, { yaw = 0.5, el = 0.64, fill = 0.84,
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = VSMShadowMap;
   if (background) renderer.setClearColor(new Color(background), 1); else renderer.setClearColor(0x000000, 0);
-  const st = buildScene(renderer, name, 'snapshot', sun ?? (mode === 'hel' || mode === 'detalj'));
+  const st = buildScene(renderer, name, 'snapshot', sun ?? (mode === 'hel' || mode === 'detalj'), farg);
   st.turn.rotation.y = yaw;
   st.scene.updateMatrixWorld(true);
   if (mode === 'hel') {

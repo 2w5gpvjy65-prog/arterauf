@@ -38,7 +38,7 @@ h3 { font-size: clamp(1.6rem, 2.4vw, 2.1rem); }
 p { margin: 0 0 1em; }
 
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
-.hidden { display: none !important; }
+.hidden, [hidden] { display: none !important; }
 
 .btn { display: inline-flex; justify-content: center; align-items: center; gap: .5em; min-height: 50px; padding: 13px 26px; background: var(--brand); color: var(--kalk); border: 1px solid var(--brand); border-radius: 3px; font: inherit; font-weight: 600; letter-spacing: .01em; text-decoration: none; cursor: pointer; transition: background-color .2s, transform .2s; }
 .btn:hover { background: var(--brand-2); }
@@ -51,15 +51,20 @@ p { margin: 0 0 1em; }
 /* Meny: fast högst upp med helt täckande bakgrund (Safari på iPhone färgar då ytan ovanför) */
 .header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background-color: var(--kalk); border-bottom: 1px solid rgba(46, 37, 32, .1); }
 .header + main { padding-top: var(--header); }
-.header__inner { display: flex; align-items: center; justify-content: space-between; height: var(--header); }
+.header__inner { display: flex; align-items: center; height: var(--header); }
 .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
 .logo__mark { width: 42px; height: 42px; flex: none; }
 .logo__word { display: inline-flex; flex-direction: column; align-items: center; font-family: var(--serif); font-size: 1.32rem; letter-spacing: .2em; text-transform: uppercase; line-height: 1; margin-right: -.2em; }
 .logo__uf { display: flex; align-items: center; gap: 6px; font-size: .5rem; letter-spacing: .3em; margin-top: 4px; color: var(--sten); }
 .logo__uf::before, .logo__uf::after { content: ""; width: 14px; height: 1px; background: currentColor; opacity: .6; }
-.nav { display: flex; gap: 32px; }
+.nav { display: flex; gap: 32px; margin-left: auto; }
 .nav a { text-decoration: none; font-weight: 500; }
 .nav a:hover { text-decoration: underline; }
+/* Kundvagnen i menyn: en påse med antal */
+.kv-knapp { position: relative; display: inline-flex; align-items: center; gap: 8px; margin-left: 36px; padding: 10px 0; background: none; border: 0; font: inherit; font-weight: 500; color: var(--brand); cursor: pointer; }
+.kv-knapp svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round; }
+.kv-knapp__antal { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--brand); color: var(--kalk); font-size: .75rem; font-weight: 600; line-height: 20px; text-align: center; }
+.kv-knapp:hover .kv-knapp__text { text-decoration: underline; }
 .nav-toggle { display: none; background: none; border: 0; padding: 12px 4px; cursor: pointer; color: var(--brand); }
 .nav-toggle span { display: block; width: 26px; height: 1.5px; background: currentColor; margin: 7px 0; transition: transform .25s; }
 .nav-toggle[aria-expanded="true"] span:first-child { transform: translateY(4.25px) rotate(45deg); }
@@ -69,6 +74,9 @@ p { margin: 0 0 1em; }
   .nav { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0; background: var(--kalk); border-bottom: 1px solid rgba(46, 37, 32, .1); padding: 0 var(--gutter) 20px; display: none; }
   .nav.is-open { display: flex; }
   .nav a { padding: 16px 0; border-bottom: 1px solid rgba(46, 37, 32, .1); font-family: var(--serif); font-size: 1.5rem; font-weight: 400; }
+  .kv-knapp { margin-left: auto; margin-right: 14px; padding: 10px 6px; }
+  .kv-knapp__text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .kv-knapp__antal { position: absolute; top: 2px; right: -6px; min-width: 18px; height: 18px; line-height: 18px; padding: 0 5px; font-size: .6875rem; }
 }
 
 /* 3D-scenen: ett canvas över hela sidan som ritar faten i sina rutor (se js/fat3d.js) */
@@ -97,6 +105,7 @@ a.stage:focus-visible { outline-offset: -6px; }
 .hero__grid { display: grid; grid-template-columns: minmax(0, 1fr); }
 .hero__text { padding: 28px var(--gutter) 0; }
 .hero h1 { max-width: 9.5em; }
+@media (min-width: 900px) { .hero h1 { font-size: clamp(2.75rem, 4.7vw, 4.25rem); } }
 .lead { font-size: 1.15rem; line-height: 1.55; max-width: 27em; }
 .hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: 28px; }
 .hero__panel { position: relative; background: var(--hero); }
@@ -120,13 +129,18 @@ a.stage:focus-visible { outline-offset: -6px; }
   .hero__note { right: 32px; top: 28px; }
 }
 
-/* Faten: produktfotona lagom stora med mycket luft runt, högra kolumnen förskjuten nedåt som i en katalog */
+/* Faten: rubrik och fakta till vänster (följer med när man scrollar), butiksrutorna två och två till höger */
 .faten { padding: 72px 0 96px; }
-.faten__head { display: grid; gap: 4px 24px; margin-bottom: 40px; }
+.faten__grid { display: grid; gap: 40px; }
+.faten__head h2 { margin-bottom: .35em; }
 .faten__head p { max-width: 30em; margin: 0; }
-.butik { list-style: none; margin: 0; padding: 0; display: grid; gap: 56px; }
-.vara { width: 86%; }
-.vara:nth-child(even) { justify-self: end; }
+.faten__fakta { list-style: none; margin: 24px 0 0; padding: 0; max-width: 30em; border-top: 1px solid rgba(46, 37, 32, .14); }
+.faten__fakta li { padding: 11px 0; border-bottom: 1px solid rgba(46, 37, 32, .14); font-size: .9375rem; line-height: 1.45; color: var(--sten); }
+.faten__fakta b { display: block; font-weight: 500; color: var(--brand); }
+.faten__fakta a { color: inherit; }
+.faten__note { display: none; }
+.butik { list-style: none; margin: 0; padding: 0; display: grid; gap: 64px 32px; }
+.vara { display: flex; flex-direction: column; }
 .vara__bild { display: block; aspect-ratio: 697 / 549; overflow: hidden; background: var(--lera); }
 .vara__bild img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s; }
 .vara__bild:hover img { transform: scale(1.025); }
@@ -136,19 +150,38 @@ a.stage:focus-visible { outline-offset: -6px; }
 .vara__info h3 a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
 .vara__pris { font-size: 1rem; margin: 0; }
 .vara__text { grid-column: 1 / -1; margin: 2px 0 0; color: var(--sten); font-size: .9375rem; }
-.faten__ship { margin: 56px 0 0; color: var(--sten); max-width: 36em; }
+.vara__val { margin-top: auto; padding-top: 16px; }
+.vara__farger { display: flex; align-items: center; gap: 14px; }
+.vara__fargnamn { font-size: .875rem; color: var(--sten); }
+.vara__lagg { display: block; width: 100%; margin-top: 16px; min-height: 46px; padding: 10px 16px; background: transparent; color: var(--brand); border: 1px solid rgba(46, 37, 32, .5); border-radius: 3px; font: inherit; font-weight: 500; font-size: .9375rem; cursor: pointer; transition: background-color .2s, color .2s, border-color .2s; }
+.vara__lagg:hover { background: var(--brand); color: var(--kalk); border-color: var(--brand); }
+/* Färgval: runda prover ur fotona */
+.prover { display: flex; flex-wrap: wrap; gap: 12px; }
+.prov { position: relative; flex: none; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: var(--lera); cursor: pointer; }
+.prov img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.prov::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid transparent; transition: border-color .2s; }
+.prov:hover::after { border-color: rgba(46, 37, 32, .35); }
+.prov[aria-pressed="true"]::after { border-color: var(--brand); }
+.prov:focus-visible { outline-offset: 6px; border-radius: 50%; }
+.prover--sma { gap: 10px; }
+.prover--sma .prov { width: 26px; height: 26px; }
+.prover--sma .prov::after { inset: -3px; }
+.prover--sma .prov::before { content: ""; position: absolute; inset: -8px; }
 @media (min-width: 700px) {
-  .butik { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 0 24px; }
-  .vara { width: auto; grid-column: 1 / span 6; }
-  .vara:nth-child(even) { grid-column: 7 / span 6; justify-self: stretch; margin-top: 88px; }
+  .butik { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 72px 32px; }
+}
+@media (min-width: 700px) and (max-width: 1099px) {
+  .faten__head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 0 40px; }
+  .faten__head h2 { grid-row: 1 / span 2; }
+  .faten__fakta { margin-top: 20px; }
 }
 @media (min-width: 900px) {
-  .faten { padding: 128px 0 120px; }
-  .faten__head { grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: end; margin-bottom: 64px; }
-  .faten__head h2 { grid-column: 1 / span 6; margin: 0; }
-  .faten__head p { grid-column: 8 / span 5; }
-  .vara { grid-column: 1 / span 5; }
-  .vara:nth-child(even) { grid-column: 8 / span 5; margin-top: 120px; }
+  .faten { padding: 128px 0 140px; }
+}
+@media (min-width: 1100px) {
+  .faten__grid { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 0 64px; align-items: start; }
+  .faten__head { position: sticky; top: calc(var(--header) + 40px); }
+  .faten__head .faten__note { display: block; margin-top: 40px; font-size: 2rem; transform: rotate(-3deg); transform-origin: left; }
 }
 
 /* På nära håll: närbilder på glasyrerna med text under */
@@ -167,34 +200,41 @@ a.stage:focus-visible { outline-offset: -6px; }
   .glasyr__list { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
 }
 
-/* Så gör vi: mörkt som en ugn. Fatet ligger fast medan stegen scrollar förbi. */
+/* Så gör vi: fatet på verkstadsbordet. Fotot står still medan stegen scrollar förbi. */
 .process { background: var(--brand); color: var(--kalk); padding: 80px 0 0; overflow: clip; }
 .process a { color: inherit; }
-.process__intro { max-width: 34em; margin-bottom: 8px; }
-.process__intro p { color: var(--sten-ljus); }
-.process__grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+.process__intro { margin-bottom: 28px; }
+.process__intro h2, .process__intro p { max-width: 34em; }
+.process__intro p { color: var(--sten-ljus); margin: 0; }
+.process__grid { position: relative; }
 /* i mobilen tar fatet bara en dryg tredjedel av skärmen */
-.process__stage { position: sticky; top: var(--header); z-index: 2; height: 36vh; height: 36svh; margin: 0 calc(var(--gutter) * -1); background: var(--brand); --heat: 0; }
-.process__stage::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 70% at 20% 100%, rgba(214, 118, 52, .32), rgba(214, 118, 52, 0) 70%); opacity: var(--heat); }
-.process__stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: -32px; height: 32px; background: linear-gradient(var(--brand), rgba(46, 37, 32, 0)); }
-.process__stage .stage__img { padding: 6%; }
-.process__steps { list-style: none; margin: 0; padding: 0 0 12vh; position: relative; z-index: 1; }
-.step { position: relative; min-height: 92vh; min-height: 92svh; max-width: 30em; transition: opacity .5s; }
-.step__body { position: sticky; top: calc(var(--header) + 36vh + 20px); top: calc(var(--header) + 36svh + 20px); padding-bottom: 24px; }
+.process__stage { position: sticky; top: var(--header); z-index: 2; height: 36vh; height: 36svh; overflow: hidden; background: #261d18; --heat: 0; }
+/* ugnen: rummet mörknar och lyses upp varmt nerifrån */
+.process__stage::before { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(90% 70% at 25% 100%, rgba(214, 118, 52, .36), rgba(214, 118, 52, 0) 70%), rgba(20, 11, 6, .42); opacity: var(--heat); pointer-events: none; }
+.process__stage .stage__img { padding: 8%; }
+.process__wrap { position: relative; z-index: 1; }
+.process__steps { list-style: none; margin: 0; padding: 0 0 12vh; }
+.step { position: relative; min-height: 62vh; min-height: 62svh; max-width: 30em; transition: opacity .5s; }
+.step:last-child { min-height: 80vh; min-height: 80svh; }
+.step__body { position: sticky; top: calc(var(--header) + 36vh + 24px); top: calc(var(--header) + 36svh + 24px); padding-bottom: 24px; }
 .has-3d .step { opacity: .38; }
 .has-3d .step.is-active { opacity: 1; }
 .step__no { display: block; font-family: var(--serif); font-size: 1.15rem; color: var(--kavel); margin-bottom: 8px; }
 .step__no::after { content: " av 5"; color: var(--sten-ljus); }
 .step h3 { margin-bottom: .3em; }
-.step p { color: var(--sten-ljus); }
+.step p { color: var(--sten-ljus); margin: 0; }
 @media (min-width: 900px) {
   .process { padding-top: 140px; }
-  .process__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 48px; }
-  .process__stage { order: 2; align-self: start; height: calc(100vh - var(--header)); height: calc(100svh - var(--header)); margin: 0 calc(var(--gutter) * -1) 0 0; }
-  .process__stage::after { display: none; }
-  .process__steps { order: 1; padding: 30vh 0 20vh; }
-  .step { min-height: 110vh; }
-  .step__body { top: calc(50vh - 80px); padding: 0; }
+  .process__intro { margin-bottom: 56px; }
+  .process__stage { height: calc(100vh - var(--header)); height: calc(100svh - var(--header)); }
+  /* stegen ligger som kort nere till vänster på fotot, ovanför 3D-lagret */
+  .process__wrap { z-index: 6; margin-top: calc(var(--header) - 100vh); margin-top: calc(var(--header) - 100svh); }
+  .process__steps { padding: 0 0 6vh; }
+  .step { min-height: 70vh; min-height: 70svh; }
+  .step:last-child { min-height: 100vh; min-height: 100svh; }
+  .step__body { top: calc(var(--header) + (100vh - var(--header)) * .52); top: calc(var(--header) + (100svh - var(--header)) * .52); max-width: 23em; padding: 24px 28px 26px; background: rgba(30, 23, 19, .78); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-radius: 2px; }
+  .has-3d .step { opacity: 0; }
+  .has-3d .step.is-active { opacity: 1; }
 }
 
 /* Om oss: stämpeln till vänster, texten till höger */
@@ -248,29 +288,43 @@ a.stage:focus-visible { outline-offset: -6px; }
 .footer__credit { margin-left: auto !important; }
 @media (max-width: 700px) { .footer__credit { margin-left: 0 !important; width: 100%; } }
 
-/* Produktsida: galleri till vänster (hela fatet i 3D, undersidan och en närbild), allt om fatet till höger */
+/* Produktsida: galleri till vänster (en stor bild och fyra små), allt om fatet till höger */
 .produkt { padding: 16px 0 0; }
 .produkt__grid { display: grid; gap: 24px 56px; }
-/* Galleri: produktfotot stort överst, under det fatet i 3D, en närbild och undersidan */
-.galleri { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.galleri__foto { grid-column: 1 / -1; margin: 0; aspect-ratio: 697 / 549; overflow: hidden; background: var(--lera); }
-.galleri__foto img { width: 100%; height: 100%; object-fit: cover; }
-.galleri__3d { grid-column: 1 / -1; aspect-ratio: 1 / .8; }
-.galleri__item { position: relative; margin: 0; aspect-ratio: 1; overflow: hidden; }
-.galleri__item img { width: 100%; height: 100%; object-fit: cover; }
+.galleri__stor { position: relative; aspect-ratio: 697 / 549; overflow: hidden; background: var(--lera); }
+.galleri__bild, .galleri__3d { position: absolute; inset: 0; width: 100%; height: 100%; }
+.galleri__bild { object-fit: cover; }
 .galleri__hint { opacity: 0; transition: opacity .4s; }
 .has-3d .galleri__hint { opacity: 1; }
+.galleri__sma { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.tumnagel { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; overflow: hidden; background: var(--lera); cursor: pointer; opacity: .62; transition: opacity .25s; }
+.tumnagel:hover, .tumnagel[aria-pressed="true"] { opacity: 1; }
+.tumnagel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tumnagel .tumnagel__fat { object-fit: contain; transform: scale(1.25); }
+.tumnagel[aria-pressed="true"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--brand); }
+.tumnagel__3d { position: absolute; left: 6px; top: 6px; padding: 1px 6px; background: rgba(247, 242, 235, .92); border-radius: 2px; font-size: .6875rem; font-weight: 600; letter-spacing: .08em; color: var(--brand); }
 @media (min-width: 700px) {
   .produkt { padding-top: 24px; }
-  .galleri { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-  .galleri__3d { grid-column: auto; aspect-ratio: 1; }
+  .galleri__sma { gap: 16px; margin-top: 16px; }
 }
 .crumbs { margin: 4px 0 14px; font-size: .9375rem; }
 .crumbs a { color: var(--sten); }
 .produkt__info h1 { font-size: clamp(2.75rem, 6vw, 4.6rem); margin-bottom: .1em; }
 .produkt__price { font-family: var(--serif); font-size: 1.75rem; margin: 0 0 18px; }
 .produkt__info .lead { margin-bottom: 26px; }
-.produkt__buy { width: 100%; min-height: 56px; font-size: 1.0625rem; }
+.fargval { margin: 0 0 26px; }
+.fargval__namn { margin: 0 0 12px; font-size: .9375rem; color: var(--sten); }
+.fargval__namn span { color: var(--brand); font-weight: 500; }
+.kop { display: flex; gap: 12px; }
+.produkt__buy { flex: 1; min-height: 56px; font-size: 1.0625rem; }
+.antal { display: inline-flex; align-items: center; flex: none; border: 1px solid rgba(46, 37, 32, .35); border-radius: 3px; }
+.antal button { width: 42px; height: 54px; background: none; border: 0; font: inherit; font-size: 1.25rem; line-height: 1; color: var(--brand); cursor: pointer; }
+.antal button:disabled { color: rgba(46, 37, 32, .28); cursor: default; }
+.antal input { width: 2em; padding: 0; border: 0; background: none; text-align: center; font: inherit; font-weight: 500; color: var(--brand); -moz-appearance: textfield; appearance: textfield; }
+.antal input::-webkit-outer-spin-button, .antal input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.antal--liten { border-color: rgba(46, 37, 32, .25); }
+.antal--liten button { width: 32px; height: 32px; font-size: 1rem; }
+.antal--liten span { min-width: 1.4em; text-align: center; font-size: .9375rem; }
 .produkt__ship { margin: 14px 0 32px; font-size: .9375rem; color: var(--sten); }
 .produkt__text { max-width: 34em; }
 .produkt__facts { display: grid; gap: 0; margin: 28px 0 36px; border-top: 1px solid rgba(46, 37, 32, .16); }
@@ -282,7 +336,6 @@ a.stage:focus-visible { outline-offset: -6px; }
   .produkt { padding-top: 40px; }
   .produkt__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; }
   .produkt__media { position: sticky; top: calc(var(--header) + 24px); }
-  .produkt__buy { width: auto; padding-inline: 44px; }
 }
 .fler { padding: 72px 0 96px; }
 .fler h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); }
@@ -294,6 +347,43 @@ a.stage:focus-visible { outline-offset: -6px; }
 .fler__name { display: block; font-family: var(--serif); font-size: 1.35rem; }
 .fler__price { color: var(--sten); font-size: .9375rem; }
 @media (max-width: 600px) { .fler__list { gap: 14px; } .fler__name { font-size: 1.1rem; } }
+
+/* Kundvagnen: en panel som glider in från höger */
+.kv { position: fixed; inset: 0; z-index: 100; }
+html.kv-las { overflow: hidden; }
+.kv__skugga { position: absolute; inset: 0; background: rgba(30, 22, 17, .42); opacity: 0; transition: opacity .3s; }
+.kv__panel { position: absolute; top: 0; right: 0; bottom: 0; width: min(440px, 100%); display: flex; flex-direction: column; background: var(--kalk); box-shadow: -12px 0 40px rgba(30, 22, 17, .14); transform: translateX(100%); transition: transform .32s cubic-bezier(.2, .7, .2, 1); }
+.kv.is-open .kv__skugga { opacity: 1; }
+.kv.is-open .kv__panel { transform: none; }
+.kv__top { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px 14px 24px; border-bottom: 1px solid rgba(46, 37, 32, .12); }
+.kv__top h2 { margin: 0; font-size: 1.75rem; }
+.kv__stang { position: relative; width: 44px; height: 44px; background: none; border: 0; cursor: pointer; }
+.kv__stang span { position: absolute; left: 12px; right: 12px; top: 50%; height: 1.5px; background: var(--brand); }
+.kv__stang span:first-child { transform: rotate(45deg); }
+.kv__stang span:last-child { transform: rotate(-45deg); }
+.kv__tom { display: none; padding: 28px 24px; }
+.kv__tom p { margin-bottom: 10px; }
+.kv--tom .kv__tom { display: block; }
+.kv--tom .kv__lista, .kv--tom .kv__fot { display: none; }
+.kv__lista { flex: 1; list-style: none; margin: 0; padding: 4px 24px; overflow-y: auto; overscroll-behavior: contain; }
+.kv__rad { display: grid; grid-template-columns: 84px minmax(0, 1fr) auto; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(46, 37, 32, .12); }
+.kv__bild { display: block; align-self: start; aspect-ratio: 697 / 549; overflow: hidden; background: var(--lera); }
+.kv__bild img { width: 100%; height: 100%; object-fit: cover; }
+.kv__namn { margin: 0; font-family: var(--serif); font-size: 1.2rem; line-height: 1.2; }
+.kv__namn a { text-decoration: none; }
+.kv__farg { margin: 2px 0 10px; font-size: .875rem; color: var(--sten); }
+.kv__hoger { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; }
+.kv__pris { margin: 0; font-size: .9375rem; white-space: nowrap; }
+.kv__bort { background: none; border: 0; padding: 6px 0; font: inherit; font-size: .8125rem; color: var(--sten); text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
+.kv__fot { padding: 18px 24px 22px; padding-bottom: calc(22px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(46, 37, 32, .12); background: var(--kalk-ljus); }
+.kv__summa { margin: 0 0 16px; }
+.kv__summa div { display: flex; justify-content: space-between; gap: 16px; padding: 3px 0; font-size: .9375rem; color: var(--sten); }
+.kv__summa dd { margin: 0; color: var(--brand); }
+.kv__summa .kv__total { margin-top: 8px; padding-top: 11px; border-top: 1px solid rgba(46, 37, 32, .12); font-size: 1.0625rem; font-weight: 600; color: var(--brand); }
+.kv__kassa { width: 100%; min-height: 54px; }
+.kv__kassa:disabled { opacity: .7; cursor: progress; }
+.kv__fel { margin: 12px 0 0; padding: 10px 12px; background: #f1e0d8; color: #6b2f1f; font-size: .875rem; border-radius: 2px; }
+.kv__info { margin: 12px 0 0; font-size: .8125rem; line-height: 1.5; color: var(--sten); }
 
 /* Enkla undersidor: tack, köp klart, köpvillkor, 404 */
 .page { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
@@ -309,6 +399,7 @@ a.stage:focus-visible { outline-offset: -6px; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .step, .stage__img, .btn, .nav-toggle span, .fler__img img { transition: none; }
+  .step, .stage__img, .btn, .nav-toggle span, .fler__img img, .vara__bild img, .kv__panel, .kv__skugga, .tumnagel { transition: none; }
+  .vara__bild:hover img { transform: none; }
   .fler__item:hover .fler__img img { transform: none; }
 }

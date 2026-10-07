@@ -11,10 +11,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Marcellus&family=Reenie+Beanie&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=8">
+  <link rel="stylesheet" href="/css/style.css?v=9">
 </head>
-<body class="page page--centered">
-  <!-- Stripe skickar köparen hit efter betalningen (after_completion i Payment Link). -->
+<body class="page page--centered" data-rensa-kundvagn>
+  <!-- Stripe skickar köparen hit efter betalningen (success_url i worker/index.js). Kundvagnen töms av js/main.js. -->
   <header class="page__top">
     <div class="wrap">
       <a href="/" class="logo" aria-label="Artera UF, till startsidan">
@@ -26,7 +26,7 @@
   <main class="page__main">
     <div class="wrap">
       <h1>Tack för ditt köp!</h1>
-      <p class="lead">Vi har fått din beställning. Vi packar fatet ordentligt och skickar det med PostNord inom 2 vardagar. Kvittot kommer till din mejl.</p>
+      <p class="lead">Vi har fått din beställning. Vi packar allt ordentligt och skickar det med PostNord inom 2 vardagar. Kvittot kommer till din mejl.</p>
       <p>Undrar du något om ordern? Skriv till oss via <a href="/#kontakt">kontaktformuläret</a> eller på Instagram, <a href="https://www.instagram.com/arterauf/" rel="noopener">@arterauf</a>.</p>
       <p class="note page__note" aria-hidden="true">tack! /Meja, Nora, Embla &amp; Lilly</p>
       <div class="page__actions"><a href="/" class="btn">Tillbaka till startsidan</a></div>
@@ -42,5 +42,6 @@
       <p class="footer__credit">Sidan är byggd av <a href="https://elevorauf.se" rel="noopener">Elevora UF</a></p>
     </div>
   </footer>
+  <script src="/js/main.js?v=9"></script>
 </body>
 </html>
